@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+spring:
+  ai:
+    openai:
+      api-key: ${GEMINI_KEY}
+      base-url: https://generativelanguage.googleapis.com/v1beta/openai
+      chat:
+        completions-path: /chat/completions
+        options:
+          model: gemini-2.0-flash-exp
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/electronics?useSSL=false&serverTimezone=UTC
+    password: 543682
+    username: kientran
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kienhien200418@gmail.com
+    password: djdgwusigpivuiyn
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # Thêm cấu hình multipart cho file upload
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+
+outbound:
+  identity:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    redirect-uri: "http://localhost:3000/authenticate"
+
+api:
+  prefix: api
+
+jwt: # 30 days = 30 * 24 * 60 * 60
+  expiration: 2592000
+  secretKey: +GG6Ogmkz1CD6OpczBSwP8VhyjU+7uXaYeXcQyz2zlU=
+
+# Logging để debug
+logging:
+  level:
+    com.project.studyenglish: DEBUG
+    org.springframework.ai: INFO
+    com.google.cloud: INFO
+    root: INFO
