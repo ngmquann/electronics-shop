@@ -64,7 +64,7 @@ public class UserService implements IUserService {
             throw new DataNotFoundException("Email already exists");
         }
 
-        RoleEntity role = roleRepository.findById(user.getRoleId())
+        RoleEntity role = roleRepository.findById(2L)
                 .orElseThrow(() -> new DataNotFoundException("Role not found"));
 
         if ("ADMIN".equalsIgnoreCase(role.getName())) {
@@ -78,6 +78,7 @@ public class UserService implements IUserService {
                 .password(encryptedPassword)
                 .roleEntity(role)
                 .activationCode(generateActivationCode())
+                .fullName(user.getFullName())
                 .build();
 
         userRepository.save(newUser);
@@ -103,11 +104,7 @@ public class UserService implements IUserService {
         UserEntity existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("Invalid email / password"));
 
-        if (existingUser.getFacebookAccountId() == 0) {
-            if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-                throw new BadCredentialsException("Wrong email or password");
-            }
-        }
+
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(

@@ -8,22 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "wishlists")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(
+        name = "wishlists",
+        uniqueConstraints = @UniqueConstraint(name = "uq_wishlist_user_product", columnNames = {"user_id", "product_id"})
+)
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class WishlistEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wishlist_id")
     private Long id;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
 
-    @ManyToMany(mappedBy = "wishlists")
-    private List<UserEntity> users = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductEntity product;
 }

@@ -33,7 +33,9 @@ public class WebSecurityConfig {
                     requests
                             .requestMatchers(
                                     String.format("%s/user/register", apiPrefix),
-                                    String.format("%s/user/login", apiPrefix)
+                                    String.format("%s/user/login", apiPrefix),
+                                    String.format("%s/category/all", apiPrefix),
+                                    String.format("%s/product/random", apiPrefix)
                             ).permitAll()
                             .anyRequest().authenticated();
                 });

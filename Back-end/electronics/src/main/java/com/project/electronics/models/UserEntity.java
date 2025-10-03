@@ -69,13 +69,6 @@ public class UserEntity  extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "wishlists",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "wishlist_id")
-    )
-    private List<WishlistEntity> wishlists = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderEntity> orders = new ArrayList<>();

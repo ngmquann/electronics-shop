@@ -21,6 +21,6 @@ public class UserRequest {
     private String password;
     @NotBlank(message = "ConfirmPassword is required")
     private String confirmPassword;
-    @JsonProperty("role")
-    private Long roleId;
+    @NotBlank(message = "fullname is required")
+    private String fullName;
 }
