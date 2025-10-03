@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     @Query(value = "SELECT * FROM products ORDER BY RAND() LIMIT :number", nativeQuery = true)
     List<ProductEntity> findRandomProducts(@Param("number") int number);
+    List<ProductEntity> findTop5ByNameContainingIgnoreCaseOrderByNameAsc(String name);
 }

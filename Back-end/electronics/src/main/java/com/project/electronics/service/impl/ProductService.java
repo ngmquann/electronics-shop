@@ -2,6 +2,7 @@ package com.project.electronics.service.impl;
 
 import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.dto.response.HomeProductResponse;
+import com.project.electronics.dto.response.ProductSearchResponse;
 import com.project.electronics.models.UserEntity;
 import com.project.electronics.repository.ProductRepository;
 import com.project.electronics.repository.UserRepository;
@@ -44,6 +45,18 @@ public class ProductService implements IProductService {
                         )
                         .build()
                 )
+                .toList();
+    }
+
+    @Override
+    public List<ProductSearchResponse> searchByName(String name) {
+        return productRepository.findTop5ByNameContainingIgnoreCaseOrderByNameAsc(name)
+                .stream()
+                .map(p -> ProductSearchResponse.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .images(!p.getImages().isEmpty() ? p.getImages().get(0).getData() : null)
+                        .build())
                 .toList();
     }
 

@@ -2,6 +2,7 @@ package com.project.electronics.controller;
 
 import com.project.electronics.dto.request.ProductNumber;
 import com.project.electronics.dto.response.HomeProductResponse;
+import com.project.electronics.dto.response.ProductSearchResponse;
 import com.project.electronics.service.impl.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ public class ProductController {
 
         List<HomeProductResponse> data = productService.getRanDomHome(number.getNumber(), request);
         return ResponseEntity.ok(data);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductSearchResponse>> searchSimple(@RequestParam String name) {
+        return ResponseEntity.ok(productService.searchByName(name));
     }
 
 }
