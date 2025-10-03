@@ -29,6 +29,10 @@ public class ProductController {
     public ResponseEntity<List<ProductSearchResponse>> searchSimple(@RequestParam String name) {
         return ResponseEntity.ok(productService.searchByName(name));
     }
+    @GetMapping("/by-category")
+    public ResponseEntity<List<HomeProductResponse>> getAllProductByCategoryId( @RequestParam Long categoryId,HttpServletRequest request) {
+        return ResponseEntity.ok(productService.getAllByCategory(categoryId,request));
+    }
 
 }
 

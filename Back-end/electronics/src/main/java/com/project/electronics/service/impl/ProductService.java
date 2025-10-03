@@ -1,9 +1,14 @@
 package com.project.electronics.service.impl;
 
 import com.project.electronics.components.JwtTokenUtil;
+import com.project.electronics.converter.CategoryConverter;
+import com.project.electronics.converter.ProductConverter;
 import com.project.electronics.dto.response.HomeProductResponse;
 import com.project.electronics.dto.response.ProductSearchResponse;
+import com.project.electronics.models.CategoryEntity;
+import com.project.electronics.models.ProductEntity;
 import com.project.electronics.models.UserEntity;
+import com.project.electronics.repository.CategoryRepository;
 import com.project.electronics.repository.ProductRepository;
 import com.project.electronics.repository.UserRepository;
 import com.project.electronics.repository.WishListRepository;
@@ -24,7 +29,8 @@ public class ProductService implements IProductService {
     private final UserRepository userRepository;
     private final WishListRepository wishListRepository;
     private final JwtTokenUtil jwtTokenUtil;
-
+    private final CategoryRepository categoryRepository;
+    private final ProductConverter productConverter;
     @Override
     @Transactional(readOnly = true)
     public List<HomeProductResponse> getRanDomHome(int number, HttpServletRequest request) {
@@ -57,6 +63,29 @@ public class ProductService implements IProductService {
                         .name(p.getName())
                         .images(!p.getImages().isEmpty() ? p.getImages().get(0).getData() : null)
                         .build())
+                .toList();
+    }
+
+    @Override
+    public List<HomeProductResponse> getAllByCategory(Long categoryId, HttpServletRequest request) {
+        CategoryEntity categoryRef = categoryRepository.getReferenceById(categoryId);
+        UserEntity user = resolveUserFromRequest(request);
+        return productRepository.findAllByCategory(categoryRef)
+                .stream()
+                .map(product -> HomeProductResponse.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .note(product.getNote())
+                        .images(
+                                product.getImages() != null && !product.getImages().isEmpty()
+                                        ? product.getImages().get(0).getData()
+                                        : null
+                        )
+                        .isFavorite(
+                                user != null && wishListRepository.existsByUser_IdAndProduct_Id(user.getId(), product.getId())
+                        )
+                        .build()
+                )
                 .toList();
     }
 

@@ -36,7 +36,8 @@ public class WebSecurityConfig {
                                     String.format("%s/user/login", apiPrefix),
                                     String.format("%s/category/all", apiPrefix),
                                     String.format("%s/product/random", apiPrefix),
-                                    String.format("%s/product/search", apiPrefix)
+                                    String.format("%s/product/search", apiPrefix),
+                                    String.format("%s/product/by-category", apiPrefix)
                             ).permitAll()
                             .anyRequest().authenticated();
                 });
