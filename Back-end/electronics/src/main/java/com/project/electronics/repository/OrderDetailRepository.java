@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -15,5 +16,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailEntity, 
     @Query("SELECT COUNT(od) FROM OrderDetailEntity od WHERE od.user = :user AND od.status = false")
     int countByUserAndStatusFalse(@Param("user") UserEntity user);
     List<OrderDetailEntity> findByUserAndStatusFalse(UserEntity user);
+    Optional<OrderDetailEntity> findByIdAndUserIdAndStatusFalse(Long id, Long userId);
+    Optional<OrderDetailEntity> findByOrderIdAndProductIdAndStatusFalse(Long orderId, Long productId);
 
 }
