@@ -1,9 +1,7 @@
 package com.project.electronics.service.impl;
 
 import com.project.electronics.converter.CategoryConverter;
-import com.project.electronics.converter.UserConverter;
 import com.project.electronics.dto.response.CategoryResponse;
-import com.project.electronics.models.CategoryEntity;
 import com.project.electronics.repository.CategoryRepository;
 import com.project.electronics.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
