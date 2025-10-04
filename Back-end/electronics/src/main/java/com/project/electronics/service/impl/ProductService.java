@@ -3,20 +3,17 @@ package com.project.electronics.service.impl;
 import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.converter.CategoryConverter;
 import com.project.electronics.converter.ProductConverter;
-import com.project.electronics.dto.response.HomeProductResponse;
-import com.project.electronics.dto.response.ProductSearchResponse;
-import com.project.electronics.models.CategoryEntity;
-import com.project.electronics.models.ProductEntity;
-import com.project.electronics.models.UserEntity;
-import com.project.electronics.repository.CategoryRepository;
-import com.project.electronics.repository.ProductRepository;
-import com.project.electronics.repository.UserRepository;
-import com.project.electronics.repository.WishListRepository;
+import com.project.electronics.dto.request.ProductCreateRequest;
+import com.project.electronics.dto.response.*;
+import com.project.electronics.models.*;
+import com.project.electronics.repository.*;
 import com.project.electronics.service.IProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +28,8 @@ public class ProductService implements IProductService {
     private final JwtTokenUtil jwtTokenUtil;
     private final CategoryRepository categoryRepository;
     private final ProductConverter productConverter;
+    private final AssociateRepository associateRepository;
+    private final MemoryRepository memoryRepository;
     @Override
     @Transactional(readOnly = true)
     public List<HomeProductResponse> getRanDomHome(int number, HttpServletRequest request) {
@@ -87,6 +86,106 @@ public class ProductService implements IProductService {
                         .build()
                 )
                 .toList();
+    }
+
+    @Override
+    public String create(ProductCreateRequest req) {
+        CategoryEntity category = categoryRepository.findById(req.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found: " + req.getCategoryId()));
+
+        List<AssociateEntity> associates = (req.getAssociateIds() == null || req.getAssociateIds().isEmpty())
+                ? new ArrayList<>()
+                : associateRepository.findAllById(req.getAssociateIds());
+
+        List<MemoryEntity> memories = (req.getMemoryIds() == null || req.getMemoryIds().isEmpty())
+                ? new ArrayList<>()
+                : memoryRepository.findAllById(req.getMemoryIds());
+
+        ProductEntity product = ProductEntity.builder()
+                .name(req.getName())
+                .note(req.getNote())
+                .detail(req.getDetail())
+                .category(category)
+                .associates(associates)
+                .memories(memories)
+                .build();
+
+        if (req.getImages() != null && !req.getImages().isEmpty()) {
+            List<ImageEntity> images = req.getImages().stream()
+                    .map(img -> ImageEntity.builder()
+                            .data(img.getData())
+                            .product(product)
+                            .build())
+                    .toList();
+            product.setImages(images);
+        } else {
+            product.setImages(new ArrayList<>());
+        }
+        if (req.getColorCreateRequest() != null && !req.getColorCreateRequest().isEmpty()) {
+            List<ColorEntity> colors = req.getColorCreateRequest().stream()
+                    .map(col -> ColorEntity.builder()
+                            .product(product)
+                            .price(col.getPrice())
+                            .name(col.getName())
+                            .build())
+                    .toList();
+            product.setColors(colors);
+        } else {
+            product.setColors(new ArrayList<>());
+        }
+
+        productRepository.save(product);
+
+        return "Thêm sản phẩm thành công";
+    }
+
+    @Override
+    public ProductResponse getProductById(Long id) {
+        ProductEntity p = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        return ProductResponse.builder()
+                .id(p.getId())
+                .name(p.getName())
+                .note(p.getNote())
+                .detail(p.getDetail())
+                .categoryId(p.getCategory().getId())
+                .categoryName(p.getCategory().getName())
+                .associates(
+                        p.getAssociates().stream()
+                                .map(a -> AssociateResponse.builder()
+                                        .id(a.getId())
+                                        .name(a.getName())
+                                        .build())
+                                .toList()
+                )
+                .memories(
+                        p.getMemories().stream()
+                                .map(m -> MemoryResponse.builder()
+                                        .id(m.getId())
+                                        .name(m.getName())
+                                        .build())
+                                .toList()
+                )
+                .colors(
+                        p.getColors().stream()
+                                .map(c -> ColorResponse.builder()
+                                        .id(c.getId())
+                                        .name(c.getName())
+                                        .price(c.getPrice())
+                                        .build())
+                                .toList()
+                )
+                .imageData(
+                        p.getImages().stream()
+                                .map(i -> ImageResponse.builder()
+                                        .id(i.getId())
+                                        .data(i.getData())
+                                        .build())
+                                .toList()
+                )
+                .build();
+
     }
 
     private UserEntity resolveUserFromRequest(HttpServletRequest request) {

@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import static org.springframework.http.HttpMethod.POST;
 
 
 @Configuration
@@ -37,8 +40,10 @@ public class WebSecurityConfig {
                                     String.format("%s/category/all", apiPrefix),
                                     String.format("%s/product/random", apiPrefix),
                                     String.format("%s/product/search", apiPrefix),
-                                    String.format("%s/product/by-category", apiPrefix)
+                                    String.format("%s/product/by-category", apiPrefix),
+                                    String.format("%s/product/by-id", apiPrefix)
                             ).permitAll()
+                            .requestMatchers(POST,  "api/product/create-product").hasRole("ADMIN")
                             .anyRequest().authenticated();
                 });
         return http.build();
