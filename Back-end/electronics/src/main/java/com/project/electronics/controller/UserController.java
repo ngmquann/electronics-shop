@@ -4,7 +4,9 @@ import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.dto.ApiError;
 import com.project.electronics.dto.request.UserLogin;
 import com.project.electronics.dto.request.UserRequest;
+import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
+import com.project.electronics.dto.response.UserResponse;
 import com.project.electronics.models.UserEntity;
 import com.project.electronics.service.IUserService;
 import jakarta.validation.Valid;
@@ -73,9 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @Valid @RequestBody UserLogin userLogin,
-            BindingResult result) throws Exception {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLogin userLogin, BindingResult result) throws Exception {
 
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors()
@@ -94,6 +94,28 @@ public class UserController {
         LoginResponse data = userService.login(userLogin.getEmail(), userLogin.getPassword());
         return ResponseEntity.ok(data);
     }
+    @PostMapping("/add-user")
+    public ResponseEntity<?> addUserByAdmin( @RequestBody UserRequestAdmin  userRequestAdmin) throws Exception {
+        String message = userService.addUserByAdmin(userRequestAdmin);
+        return ResponseEntity.ok(Map.of("message", message));
+    }
+    @GetMapping("/status/{userId}")
+    public ResponseEntity<?> setStatusByAdmin(@PathVariable Long userId) throws Exception {
+        String message = userService.setStatusUserByAdmin(userId);
+        return ResponseEntity.ok(Map.of("message", message));
+    }
+    @GetMapping("/all-user")
+    public ResponseEntity<?> getAllUserByAdmin( )throws Exception {
+       List<UserResponse> list = userService.getAllUserResponses();
+        return ResponseEntity.ok(list);
+    }
+    @DeleteMapping("/by-admin/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) throws Exception {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
+    }
+
+
 
 
 

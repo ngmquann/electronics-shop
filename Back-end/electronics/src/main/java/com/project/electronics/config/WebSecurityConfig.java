@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
@@ -35,6 +35,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     requests
                             .requestMatchers(
+                                    "/v3/api-docs/**",
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html",
                                     String.format("%s/user/register", apiPrefix),
                                     String.format("%s/user/login", apiPrefix),
                                     String.format("%s/category/all", apiPrefix),
@@ -43,7 +46,15 @@ public class WebSecurityConfig {
                                     String.format("%s/product/by-category", apiPrefix),
                                     String.format("%s/product/by-id", apiPrefix)
                             ).permitAll()
+                            //product
                             .requestMatchers(POST,  "api/product/create-product").hasRole("ADMIN")
+                            //associate
+                            .requestMatchers( "api/associates/**").hasRole("ADMIN")
+                            //user
+                            .requestMatchers( POST,"api/user/add-user").hasRole("ADMIN")
+                            .requestMatchers( GET,"api/user/status/**").hasRole("ADMIN")
+                            .requestMatchers( GET,"api/user/all-user").hasRole("ADMIN")
+                            .requestMatchers( DELETE,"api/user/by-admin/**").hasRole("ADMIN")
                             .anyRequest().authenticated();
                 });
         return http.build();

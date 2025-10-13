@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
     List<UserEntity> findByRoleEntityIn(List<RoleEntity> roleEntities);
     @Query("SELECT u FROM UserEntity u WHERE u.roleEntity.id != 1")
     List<UserEntity> findByRoleEntityNot();
-
+    List<UserEntity> findAllByRoleEntity_Id(Long roleId);
 
 }

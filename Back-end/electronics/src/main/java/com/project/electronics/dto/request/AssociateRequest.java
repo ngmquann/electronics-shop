@@ -1,4 +1,4 @@
-package com.project.electronics.dto.response;
+package com.project.electronics.dto.request;
 
 
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AssociateResponse {
+public class AssociateRequest {
     private Long id;
     private String name;
     private String type;

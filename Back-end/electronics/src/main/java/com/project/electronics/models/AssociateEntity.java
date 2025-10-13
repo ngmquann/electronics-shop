@@ -26,6 +26,10 @@ public class AssociateEntity {
     @Column(name = "type", nullable = false, length = 50)
     private String type;
 
+    @Column(name = "logo",columnDefinition = "LONGTEXT")
+    @Lob
+    private String logo;
+
     @ManyToMany(mappedBy = "associates")
     private List<ProductEntity> products = new ArrayList<>();
 }

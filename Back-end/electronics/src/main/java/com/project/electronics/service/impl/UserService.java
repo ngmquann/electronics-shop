@@ -5,7 +5,9 @@ import com.project.electronics.converter.UserConverter;
 import com.project.electronics.customexceptions.DataNotFoundException;
 import com.project.electronics.customexceptions.PermissionDenyException;
 import com.project.electronics.dto.request.UserRequest;
+import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
+import com.project.electronics.dto.response.UserResponse;
 import com.project.electronics.models.RoleEntity;
 import com.project.electronics.models.UserEntity;
 import com.project.electronics.repository.RoleRepository;
@@ -14,6 +16,7 @@ import com.project.electronics.repository.httpclient.OutboundIdentityClient;
 import com.project.electronics.repository.httpclient.OutboundUserClient;
 import com.project.electronics.service.IEmailService;
 import com.project.electronics.service.IUserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -122,8 +125,60 @@ public class UserService implements IUserService {
                 .build();
     }
 
+    @Override
+    public String addUserByAdmin(UserRequestAdmin userRequest) throws Exception {
+        if (userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new DataNotFoundException("Email already exists");
+        }
+
+        RoleEntity role = roleRepository.findById(2L)
+                .orElseThrow(() -> new DataNotFoundException("Role not found"));
+
+        if ("ADMIN".equalsIgnoreCase(role.getName())) {
+            throw new PermissionDenyException("Admin role cannot be created");
+        }
+
+        String encryptedPassword = passwordEncoder.encode(userRequest.getPassword());
+
+        UserEntity newUser = UserEntity.builder()
+                .email(userRequest.getEmail())
+                .password(encryptedPassword)
+                .roleEntity(role)
+                .activationCode(generateActivationCode())
+                .fullName(userRequest.getFullName())
+                .active(true)
+                .build();
+
+        userRepository.save(newUser);
 
 
+        return "User created by admin" ;
+    }
 
+    @Override
+    public String setStatusUserByAdmin(Long userId) throws Exception {
+        UserEntity existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+
+        existingUser.setActive(!existingUser.isActive());
+        userRepository.save(existingUser);
+        return "User status is changed by admin";
+    }
+
+    @Override
+    public List<UserResponse> getAllUserResponses() {
+        return userRepository.findAllByRoleEntity_Id(2L)
+                .stream()
+                .map(entity -> userConverter.toUserResponse(entity))
+                .toList();
+    }
+
+    @Transactional
+    @Override
+    public void deleteUserById(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User not found with id: " + userId));
+        userRepository.delete(user);
+    }
 
 }
