@@ -1,0 +1,374 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container chính */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ---- Iphone ------ */
+
+.product-view {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+}
+
+.product-gallery {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 516px;
+  gap: 20px;
+  justify-content: center;
+  margin: 35px auto 0 0;
+}
+
+.product-gallery .thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-gallery .thumbs img {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: 0.2s;
+  border: hidden;
+}
+
+.product-gallery .thumbs img:hover {
+  border-color: #000;
+}
+
+.product-gallery .main-images {
+  width: 350px;
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-gallery .main-images img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.price {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+  line-height: 48px;
+  letter-spacing: 3%;
+}
+
+.old-price {
+  width: 419px;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 32px;
+  letter-spacing: 3%;
+  text-decoration: line-through;
+  color: #a0a0a0;
+  margin-left: 10px;
+}
+
+.storage button {
+  width: 122px;
+  height: 48px;
+  border: 1px solid #ddd;
+  padding: 16px 24px;
+  margin: 5px;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.storage button:hover {
+  transform: scale(1.05);
+}
+
+.storage button.active {
+  border: 2px solid #333;
+}
+
+.colors .color {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: transform 0.2s, border 0.2s;
+}
+
+.colors {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.colors .black {
+  background-color: #000000;
+}
+
+.colors .white {
+  background-color: #e8e8e8;
+}
+
+.colors .red {
+  background-color: #e10000;
+}
+
+.colors .purple {
+  background-color: #781dbc;
+}
+
+.colors .gold {
+  background-color: #e1b000;
+}
+
+.colors p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.colors .color:hover {
+  transform: scale(1.1);
+}
+
+.colors .color.active {
+  border: 2px solid #333;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 260px;
+  min-width: 136px;
+  height: 56px;
+  padding: 16px 56px;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.actions .add-wishlist {
+  background-color: #fff;
+  color: #000;
+}
+
+.actions .add-cart {
+  background: #000000;
+  color: #fff;
+}
+
+.actions button:hover {
+  opacity: 0.85;
+}
+
+.quick-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.quick-info li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #f9f9f9;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.quick-info .icon {
+  font-size: 24px;
+}
+
+.quick-info .text {
+  display: flex;
+  flex-direction: column; /* cho spec + value xuống dòng */
+}
+
+.quick-info .spec {
+  color: #a7a7a7;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.quick-info .value {
+  color: #333;
+  /* font-size: 15px; */
+  font-weight: 500;
+}
+
+.short-des {
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6c6c6c;
+  margin-bottom: 20px;
+  max-width: 536px;
+}
+
+.short-des span.more {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #000;
+}
+
+.extra-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.extra-info li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.extra-info .icon {
+  font-size: 20px;
+  color: #444;
+  flex-shrink: 0;
+}
+
+.extra-info .text {
+  display: flex;
+  flex-direction: column;
+}
+
+.extra-info .spec {
+  color: #a7a7a7;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.extra-info .value {
+  color: #222;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ----- DETAILS CARD ----- */
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.card p.desc {
+  color: #666;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table tr {
+  border-bottom: 1px solid #ddd;
+}
+
+table td {
+  padding: 10px 10px 10px 0;
+}
+
+table td:first-child {
+  color: #444;
+}
+
+table td:last-child {
+  text-align: right; /* 👈 căn số sang phải */
+}
+
+/* Nút view more */
+.view-more {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 56px;
+  border: 1px solid #888;
+  border-radius: 6px;
+  background: #ffff;
+  cursor: pointer;
+}
+
+/* ----- RELATED PRODUCTS ----- */
+.related-products {
+  margin-top: 40px;
+}
+
+.related-products h2 {
+  margin-bottom: 20px;
+}
+
+.product-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.products-grid {
+  display: flex;
+  gap: 16px;
+  justify-content: space-around;
+}
