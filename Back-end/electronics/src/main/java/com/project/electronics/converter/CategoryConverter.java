@@ -1,5 +1,6 @@
 package com.project.electronics.converter;
 
+import com.project.electronics.dto.request.CategoryRequest;
 import com.project.electronics.dto.response.CategoryResponse;
 import com.project.electronics.models.CategoryEntity;
 import org.modelmapper.ModelMapper;
@@ -17,5 +18,15 @@ public class CategoryConverter {
 
         return categoryResponse;
     }
+    public CategoryEntity toEntity(CategoryRequest req) {
+        return CategoryEntity.builder()
+                .id(req.getId())
+                .name(req.getName())
+                .build();
+    }
+    public void updateEntity(CategoryEntity entity, CategoryRequest req) {
+        entity.setName(req.getName());
+    }
+
 
 }

@@ -41,10 +41,12 @@ public class WebSecurityConfig {
                                     String.format("%s/user/register", apiPrefix),
                                     String.format("%s/user/login", apiPrefix),
                                     String.format("%s/category/all", apiPrefix),
+                                    String.format("%s/category/get-by/**", apiPrefix),
                                     String.format("%s/product/random", apiPrefix),
                                     String.format("%s/product/search", apiPrefix),
                                     String.format("%s/product/by-category", apiPrefix),
                                     String.format("%s/product/by-id", apiPrefix)
+
                             ).permitAll()
                             //product
                             .requestMatchers(POST,  "api/product/create-product").hasRole("ADMIN")
@@ -55,6 +57,10 @@ public class WebSecurityConfig {
                             .requestMatchers( GET,"api/user/status/**").hasRole("ADMIN")
                             .requestMatchers( GET,"api/user/all-user").hasRole("ADMIN")
                             .requestMatchers( DELETE,"api/user/by-admin/**").hasRole("ADMIN")
+                            // category
+                            .requestMatchers(POST,   String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
+                            .requestMatchers(PUT,    String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
+                            .requestMatchers(DELETE, String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
                             .anyRequest().authenticated();
                 });
         return http.build();
