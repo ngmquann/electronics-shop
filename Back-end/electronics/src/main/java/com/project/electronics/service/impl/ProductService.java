@@ -3,6 +3,8 @@ package com.project.electronics.service.impl;
 import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.converter.CategoryConverter;
 import com.project.electronics.converter.ProductConverter;
+import com.project.electronics.dto.request.ColorCreateRequest;
+import com.project.electronics.dto.request.ImageCreateRequest;
 import com.project.electronics.dto.request.ProductCreateRequest;
 import com.project.electronics.dto.response.*;
 import com.project.electronics.models.*;
@@ -140,6 +142,59 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public String update(ProductCreateRequest req) {
+        ProductEntity existing = productRepository.findById(req.getId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm ID: " + req.getId()));
+
+        existing.setName(req.getName());
+        existing.setNote(req.getNote());
+        existing.setDetail(req.getDetail());
+
+        if (req.getCategoryId() != null) {
+            CategoryEntity category = categoryRepository.findById(req.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy category ID: " + req.getCategoryId()));
+            existing.setCategory(category);
+        }
+
+        List<AssociateEntity> associates = (req.getAssociateIds() == null || req.getAssociateIds().isEmpty())
+                ? new ArrayList<>()
+                : associateRepository.findAllById(req.getAssociateIds());
+        existing.setAssociates(associates);
+
+        List<MemoryEntity> memories = (req.getMemoryIds() == null || req.getMemoryIds().isEmpty())
+                ? new ArrayList<>()
+                : memoryRepository.findAllById(req.getMemoryIds());
+        existing.setMemories(memories);
+
+        if (req.getImages() != null) {
+            existing.getImages().clear();
+            for (ImageCreateRequest imgReq : req.getImages()) {
+                ImageEntity img = ImageEntity.builder()
+                        .data(imgReq.getData())
+                        .product(existing)
+                        .build();
+                existing.getImages().add(img);
+            }
+        }
+        if (req.getColorCreateRequest() != null) {
+            existing.getColors().clear();
+            for (ColorCreateRequest colReq : req.getColorCreateRequest()) {
+                ColorEntity col = ColorEntity.builder()
+                        .name(colReq.getName())
+                        .price(colReq.getPrice())
+                        .product(existing)
+                        .build();
+                existing.getColors().add(col);
+            }
+        }
+
+        productRepository.save(existing);
+        return "Cập nhật sản phẩm thành công";
+    }
+
+
+
+    @Override
     public ProductResponse getProductById(Long id) {
         ProductEntity p = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
@@ -156,6 +211,8 @@ public class ProductService implements IProductService {
                                 .map(a -> AssociateResponse.builder()
                                         .id(a.getId())
                                         .name(a.getName())
+                                        .logo(a.getLogo())
+                                        .type(a.getType())
                                         .build())
                                 .toList()
                 )
@@ -164,6 +221,7 @@ public class ProductService implements IProductService {
                                 .map(m -> MemoryResponse.builder()
                                         .id(m.getId())
                                         .name(m.getName())
+                                        .price(m.getPrice())
                                         .build())
                                 .toList()
                 )

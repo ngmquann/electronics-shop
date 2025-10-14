@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProductCreateRequest {
+    private Long id;
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Note is required")

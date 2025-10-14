@@ -63,6 +63,23 @@ public class ProductController {
 
         return ResponseEntity.ok(Map.of("message", rs));
     }
+    @PostMapping("/update-product")
+    public ResponseEntity<?> updateProduct(
+            @Valid @RequestBody ProductCreateRequest request,
+            BindingResult result
+    ) {
+        if (result.hasErrors()) {
+            List<String> errorMessages = result.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
+
+        String rs = productService.update(request);
+        return ResponseEntity.ok(Map.of("message", rs));
+    }
+    
 
 }
 

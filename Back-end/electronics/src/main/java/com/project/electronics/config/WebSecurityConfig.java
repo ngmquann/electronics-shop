@@ -50,6 +50,7 @@ public class WebSecurityConfig {
                             ).permitAll()
                             //product
                             .requestMatchers(POST,  "api/product/create-product").hasRole("ADMIN")
+                            .requestMatchers(POST,  "api/product/update-product").hasRole("ADMIN")
                             //associate
                             .requestMatchers( "api/associates/**").hasRole("ADMIN")
                             //user

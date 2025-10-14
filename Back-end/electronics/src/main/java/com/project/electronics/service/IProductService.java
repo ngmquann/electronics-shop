@@ -14,6 +14,7 @@ public interface IProductService {
     List<ProductSearchResponse> searchByName(String name);
     List<HomeProductResponse> getAllByCategory(Long categoryId, HttpServletRequest request);
     String create(ProductCreateRequest req);
+    String update(ProductCreateRequest req);
     ProductResponse getProductById(Long id);
 }
 
