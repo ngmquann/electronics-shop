@@ -4,7 +4,6 @@ package com.project.electronics.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderEntity {
+public class OrderEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +26,8 @@ public class OrderEntity {
     @Column(name = "total", nullable = false)
     private Double total;
 
-    @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    @Column(name = "status", nullable = false)
+    private Boolean status;
 
     @Column(name = "method_delivery", length = 50, nullable = false)
     private String methodDelivery;
@@ -36,6 +35,9 @@ public class OrderEntity {
 
     @Column(name = "status_method_delivery", length = 50, nullable = false)
     private String statusMethodDelivery;
+
+    @Column(name = "method_payment", length = 50, nullable = false)
+    private String methodPayment;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails = new ArrayList<>();

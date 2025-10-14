@@ -24,6 +24,12 @@ public class OrderDetailEntity {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
+    @Column(name = "memory_id", nullable = false)
+    private Long memoryId;
+
+    @Column(name = "color_id", nullable = false)
+    private Long colorId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id")
     private OrderEntity order;

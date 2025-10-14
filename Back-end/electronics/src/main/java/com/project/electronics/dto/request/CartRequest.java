@@ -11,5 +11,7 @@ import lombok.*;
 public class CartRequest {
     private Integer quantity;
     private Long productId;
+    private Long colorId;
+    private Long memoryId;
 }
 

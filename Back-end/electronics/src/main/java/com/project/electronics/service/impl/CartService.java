@@ -120,11 +120,11 @@ public class CartService implements ICartService {
         ProductEntity product = productRepository.findById(cartRequest.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found: " + cartRequest.getProductId()));
 
-        OrderEntity cart = orderRepository.findFirstByUserIdAndStatus(user.getId(), "CART")
+        OrderEntity cart = orderRepository.findFirstByUserIdAndStatus(user.getId(), false)
                 .orElseGet(() -> orderRepository.save(
                         OrderEntity.builder()
                                 .user(user)
-                                .status("CART")
+                                .status(false)
                                 .methodDelivery("NONE")
                                 .statusMethodDelivery("PENDING")
                                 .total(0.0)
@@ -146,6 +146,8 @@ public class CartService implements ICartService {
                     .status(false)
                     .user(user)
                     .product(product)
+                    .memoryId(cartRequest.getMemoryId())
+                    .colorId(cartRequest.getColorId())
                     .quantity(qty)
                     .order(cart)
                     .build();

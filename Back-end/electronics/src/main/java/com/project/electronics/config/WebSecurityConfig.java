@@ -61,6 +61,9 @@ public class WebSecurityConfig {
                             .requestMatchers(POST,   String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
                             .requestMatchers(PUT,    String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
                             .requestMatchers(DELETE, String.format("%s/category/**", apiPrefix)).hasRole("ADMIN")
+                            //order
+                            .requestMatchers(GET, String.format("%s/order/by-admin", apiPrefix)).hasRole("ADMIN")
+                            .requestMatchers(POST, String.format("%s/order/change-status", apiPrefix)).hasRole("ADMIN")
                             // memory
                             .requestMatchers(   String.format("%s/memory/**", apiPrefix)).hasRole("ADMIN")
                             .anyRequest().authenticated();
