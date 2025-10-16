@@ -126,7 +126,8 @@ public class CartService implements ICartService {
                                 .user(user)
                                 .status(false)
                                 .methodDelivery("NONE")
-                                .statusMethodDelivery("PENDING")
+                                .statusMethodDelivery("CART")
+                                .methodPayment("NONE")
                                 .total(0.0)
                                 .build()
                 ));

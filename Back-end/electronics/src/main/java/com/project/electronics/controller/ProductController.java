@@ -2,11 +2,9 @@ package com.project.electronics.controller;
 
 import com.project.electronics.dto.request.ProductCreateRequest;
 import com.project.electronics.dto.request.ProductNumber;
-import com.project.electronics.dto.request.UserRequest;
 import com.project.electronics.dto.response.HomeProductResponse;
 import com.project.electronics.dto.response.ProductResponse;
 import com.project.electronics.dto.response.ProductSearchResponse;
-import com.project.electronics.models.UserEntity;
 import com.project.electronics.service.impl.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -79,7 +77,7 @@ public class ProductController {
         String rs = productService.update(request);
         return ResponseEntity.ok(Map.of("message", rs));
     }
-    
+
 
 }
 

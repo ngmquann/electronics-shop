@@ -1,7 +1,6 @@
 package com.project.electronics.controller;
 
 import com.project.electronics.dto.request.CategoryRequest;
-import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.CategoryResponse;
 import com.project.electronics.service.impl.CategoryService;
 import jakarta.validation.Valid;

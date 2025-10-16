@@ -121,6 +121,7 @@ public class OrderService implements IOrderService {
         order.setMethodDelivery(orderRequest.getMethodDelivery());
         order.setMethodPayment(orderRequest.getMethodPayment());
         order.setStatus(true);
+        order.setStatusMethodDelivery("PENDING");
         order.setAddress(orderRequest.getAddress());
         order.setOrderDetails(orderDetailEntityList);
         orderRepository.save(order);

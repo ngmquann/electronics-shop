@@ -67,6 +67,9 @@ public class WebSecurityConfig {
                             .requestMatchers(POST, String.format("%s/order/change-status", apiPrefix)).hasRole("ADMIN")
                             // memory
                             .requestMatchers(   String.format("%s/memory/**", apiPrefix)).hasRole("ADMIN")
+                            //dashboard
+                            .requestMatchers(GET, "api/dashboard/**").hasRole("ADMIN")
+
                             .anyRequest().authenticated();
                 });
         return http.build();
