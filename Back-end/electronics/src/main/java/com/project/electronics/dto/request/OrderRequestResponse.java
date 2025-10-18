@@ -1,16 +1,15 @@
 package com.project.electronics.dto.request;
 
-
 import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderRequest {
+public class OrderRequestResponse {
+    private Long orderId;
     private Double total;
     private String methodPayment;
     private String methodDelivery;

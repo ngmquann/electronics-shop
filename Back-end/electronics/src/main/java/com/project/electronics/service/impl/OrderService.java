@@ -3,6 +3,7 @@ package com.project.electronics.service.impl;
 import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.dto.request.ChangeStatusRequest;
 import com.project.electronics.dto.request.OrderRequest;
+import com.project.electronics.dto.request.OrderRequestResponse;
 import com.project.electronics.dto.response.OrderItemResponse;
 import com.project.electronics.dto.response.OrderResponse;
 import com.project.electronics.dto.response.UserBriefDto;
@@ -109,15 +110,14 @@ public class OrderService implements IOrderService {
         return result;
     }
     @Override
-    public String addOrder(OrderRequest orderRequest, HttpServletRequest httpServletRequest) {
-        UserEntity user = resolveUserFromRequest(httpServletRequest);
-        OrderEntity order = orderRepository.findFirstByUserIdAndStatus(user.getId(), false)
+    public String addOrder(OrderRequestResponse orderRequest) {
+        OrderEntity order = orderRepository.findByIdAndStatus(orderRequest.getOrderId(), false)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng trong giỏ."));
         List<OrderDetailEntity> orderDetailEntityList = order.getOrderDetails();
         for (OrderDetailEntity detail : orderDetailEntityList) {
             detail.setStatus(true);
         }
-        order.setTotal(orderRequest.getTotal());
+        order.setTotal(orderRequest.getTotal()/100);
         order.setMethodDelivery(orderRequest.getMethodDelivery());
         order.setMethodPayment(orderRequest.getMethodPayment());
         order.setStatus(true);
