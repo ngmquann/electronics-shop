@@ -44,7 +44,7 @@ public class OrderController {
                 .fromHttpUrl("http://localhost:5173/payment/result")
                 .queryParam("status", "success")
                 .queryParam("code", "00")
-                .queryParam("message", result) 
+                .queryParam("message", result)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
