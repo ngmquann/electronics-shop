@@ -1,0 +1,46 @@
+.pageWrapper {
+  background: #fff;
+  color: #111;
+  min-height: 100vh;
+  padding: 24px 160px;
+}
+
+.breadcrumbs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+}
+
+.container {
+  display: flex;
+  gap: 32px;
+}
+
+.sidebar {
+  flex: 1;
+  max-width: 220px;
+}
+
+.products {
+  flex: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.productCard {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: 0.3s;
+  background: #fff;
+}
+
+.productCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+}

@@ -31,7 +31,12 @@ function Header() {
         <div className="list-icon">
           <GrFavorite className="icon-item" />
           <PiShoppingCart className="icon-item" />
-          <FiUser className="icon-item" />
+          <FiUser
+            className="icon-item"
+            onClick={() => navigation("/login")}
+            style={{ cursor: "pointer" }}
+            title="Go to Login"
+          />
         </div>
       </div>
     </div>

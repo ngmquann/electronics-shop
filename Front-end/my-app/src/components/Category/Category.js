@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom"
+
 function CategoryItem({ icon, label }) {
+  const navigate = useNavigate()
   return (
     <div
       style={{
@@ -12,6 +15,7 @@ function CategoryItem({ icon, label }) {
         alignItems: "center",
         justifyContent: "center",
       }}
+      onClick={() => navigate("/catalog")}
     >
       <div style={{ fontSize: "48px", width: "48px", height: "48px" }}>
         {icon}
