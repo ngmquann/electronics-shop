@@ -19,7 +19,7 @@ import OrderManagement from "./pages/admin/OrderManagement"
 import OrderDetail from "./pages/admin/OrderManagement/OrderDetail"
 
 function App() {
-  const token = localStorage.getItem("jwtToken")
+  const token = localStorage.getItem("access_token")
   let userData
   let isAdmin = false
 

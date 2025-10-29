@@ -7,6 +7,7 @@ import { MdKey } from "react-icons/md"
 import { IoLogOut } from "react-icons/io5"
 import { FaBagShopping, FaFloppyDisk, FaMicrochip } from "react-icons/fa6"
 import { TbCategoryPlus } from "react-icons/tb"
+import { clearAuth } from "../../utils/storage"
 
 const { Sider } = Layout
 
@@ -49,7 +50,13 @@ const itemDropdown = [
   {
     key: "2",
     label: (
-      <a rel="noopener noreferrer" href="/">
+      <a
+        rel="noopener noreferrer"
+        href="/"
+        onClick={() => {
+          clearAuth()
+        }}
+      >
         Đăng xuất
       </a>
     ),

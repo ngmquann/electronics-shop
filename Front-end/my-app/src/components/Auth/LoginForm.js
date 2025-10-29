@@ -1,16 +1,35 @@
-import { Form, Input, Button, Checkbox, Typography } from "antd"
-import { Link } from "react-router-dom"
+import { Form, Input, Button, Checkbox, Typography, message } from "antd"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "./auth.module.css"
+import { useState } from "react"
+import { AuthService } from "../../services/AuthService"
 
 const { Title } = Typography
 
 const LoginForm = () => {
-  const onFinish = (values) => {
-    console.log("Login values:", values)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const [messageApi, contextHolder] = message.useMessage()
+
+  const onFinish = async (values) => {
+    setLoading(true)
+
+    try {
+      await AuthService.login(values.email, values.password)
+
+      messageApi.success("Login successful")
+      navigate("/")
+    } catch (error) {
+      const errMsg = error.response?.data?.message || "Login failed"
+      messageApi.error(errMsg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <>
+      {contextHolder}
       <Title level={2} className={styles.title}>
         Welcome Back
       </Title>
@@ -43,6 +62,7 @@ const LoginForm = () => {
             block
             size="large"
             style={{ borderRadius: 10 }}
+            loading={loading}
           >
             Sign In
           </Button>

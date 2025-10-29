@@ -1,16 +1,43 @@
-import { Form, Input, Button, Checkbox, Typography } from "antd"
-import { Link } from "react-router-dom"
+import { Form, Input, Button, Checkbox, Typography, message } from "antd"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "./auth.module.css"
+import { useState } from "react"
+import { AuthService } from "../../services/AuthService"
 
 const { Title } = Typography
 
 const SignupForm = () => {
-  const onFinish = (values) => {
-    console.log("Signup values:", values)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const [messageApi, contextHolder] = message.useMessage()
+
+  const onFinish = async (values) => {
+    setLoading(true)
+
+    try {
+      const user = await AuthService.register(
+        values.name,
+        values.email,
+        values.password,
+        values.confirmPassword
+      )
+
+      messageApi.success(`Welcome ${user}! Your account has been created.`)
+      navigate("/login")
+    } catch (error) {
+      console.log("form error: ", error)
+
+      const errMsg =
+        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại."
+      messageApi.error(errMsg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <>
+      {contextHolder}
       <Title level={2} className={styles.title}>
         Create an Account
       </Title>
@@ -79,6 +106,7 @@ const SignupForm = () => {
             block
             size="large"
             style={{ borderRadius: 10 }}
+            loading={loading}
           >
             Sign Up
           </Button>
