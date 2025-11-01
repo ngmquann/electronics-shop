@@ -1,65 +1,57 @@
-import React, { useState } from "react"
-import { Table, Tag, Space, Button, Modal } from "antd"
+import React, { useEffect, useState } from "react"
+import { Table, Tag, Button, Modal, Spin, message } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom"
-// import { users } from "../data"
+import { UserService } from "../../../../services/UserService"
 
 const UserTable = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
-  const [modalText, setModalText] = useState(
-    "Bạn chắc chắn muốn xóa người dùng này?"
-  )
-  const showModal = () => {
-    setOpen(true)
-  }
-  const handleOk = () => {
-    setModalText("Đang xóa người dùng...")
-    setConfirmLoading(true)
-    setTimeout(() => {
-      setOpen(false)
-      setConfirmLoading(false)
-    }, 2000)
-  }
-  const handleCancel = () => {
-    console.log("Clicked cancel button")
-    setOpen(false)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [messageApi, contextHolder] = message.useMessage()
+
+  const fetchUsers = async () => {
+    setLoading(true)
+    try {
+      const users = await UserService.getAllUser()
+      setData(users)
+    } catch (error) {
+      messageApi.error(error.message || "Không thể tải danh sách người dùng")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const users = [
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      email: "a@gmail.com",
-      role: "Admin",
-      status: "Active",
-      dob: "01/01/1990",
-      phone: "0901111111",
-      address: "Hà Nội",
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      email: "b@gmail.com",
-      role: "User",
-      status: "Inactive",
-      dob: "02/02/1992",
-      phone: "0902222222",
-      address: "TP.HCM",
-    },
-    {
-      id: 3,
-      name: "Phạm Văn C",
-      email: "c@gmail.com",
-      role: "User",
-      status: "Active",
-      dob: "03/03/1993",
-      phone: "0903333333",
-      address: "Đà Nẵng",
-    },
-  ]
-  const [data, setData] = useState(users)
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  const showModal = (id) => {
+    setSelectedUserId(id)
+    setOpen(true)
+  }
+
+  const handleOk = async () => {
+    if (!selectedUserId) return
+    setConfirmLoading(true)
+    try {
+      await UserService.deleteUser(selectedUserId)
+      messageApi.success("Xóa người dùng thành công")
+      setOpen(false)
+      fetchUsers() // Refresh danh sách
+    } catch (error) {
+      messageApi.error(error.message || "Không thể xóa người dùng")
+    } finally {
+      setConfirmLoading(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setOpen(false)
+  }
 
   const columns = [
     {
@@ -69,15 +61,14 @@ const UserTable = () => {
     },
     {
       title: "Họ tên",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
     },
-
     {
       title: "Ngày sinh",
       dataIndex: "dob",
@@ -88,7 +79,9 @@ const UserTable = () => {
       dataIndex: "role",
       key: "role",
       render: (role) => (
-        <Tag color={role === "Admin" ? "volcano" : "blue"}>{role}</Tag>
+        <Tag color={role === "Admin" ? "volcano" : "blue"}>
+          {role || "User"}
+        </Tag>
       ),
     },
     {
@@ -103,7 +96,7 @@ const UserTable = () => {
           <Button
             danger
             icon={<DeleteOutlined />}
-            onClick={() => showModal()}
+            onClick={() => showModal(record.id)}
           />
         </div>
       ),
@@ -112,20 +105,26 @@ const UserTable = () => {
 
   return (
     <>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
-      />
+      {contextHolder}
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 5 }}
+        />
+      )}
+
       <Modal
-        title="Xóa"
+        title="Xác nhận xóa"
         open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <p>{modalText}</p>
+        <p>Bạn có chắc chắn muốn xóa người dùng này không?</p>
       </Modal>
     </>
   )

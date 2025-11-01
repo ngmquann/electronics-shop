@@ -1,17 +1,11 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Modal, Table } from "antd"
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { Button, Form, Input, message, Modal, Spin, Table } from "antd"
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
+import { CategoryService } from "../../../../services/CategoryService"
 
 const CategoryTable = forwardRef((_, ref) => {
   const [form] = Form.useForm()
-  const [data, setData] = useState([
-    { id: 1, name: "Điện thoại" },
-    { id: 2, name: "Máy tính bảng" },
-    { id: 3, name: "Tai nghe" },
-    { id: 4, name: "Máy ảnh" },
-    { id: 5, name: "Chuột" },
-    { id: 6, name: "Bàn phím" },
-  ])
+  const [data, setData] = useState([])
 
   // Modal states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -26,9 +20,27 @@ const CategoryTable = forwardRef((_, ref) => {
   const [editingCategory, setEditingCategory] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
+  const [messageApi, contextHolder] = message.useMessage()
+
   useImperativeHandle(ref, () => ({
     openAddForm: () => handleAdd(),
   }))
+
+  const fetchCategories = async () => {
+    setLoading(true)
+    try {
+      const categories = await CategoryService.getAllCategories()
+      setData(categories)
+    } catch (error) {
+      messageApi.error(error.message || "Không thể tải danh sách danh mục")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   // === Thêm mới ===
   const handleAdd = () => {
@@ -50,13 +62,19 @@ const CategoryTable = forwardRef((_, ref) => {
     setIsDeleteModalOpen(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
+    if (!selectedCategory) return
     setLoading(true)
-    setTimeout(() => {
-      setData((prev) => prev.filter((item) => item.id !== selectedCategory.id))
+    try {
+      await CategoryService.deleteCategory(selectedCategory.id)
+      messageApi.success("Xóa danh mục thành công")
       setIsDeleteModalOpen(false)
+      fetchCategories()
+    } catch (error) {
+      messageApi.error(error.message || "Không thể xóa danh mục")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   // === Submit Form (Add/Edit) ===
@@ -65,29 +83,25 @@ const CategoryTable = forwardRef((_, ref) => {
       const values = await form.validateFields()
       setLoading(true)
 
-      setTimeout(() => {
-        if (editingCategory) {
-          // Update
-          setData((prev) =>
-            prev.map((item) =>
-              item.id === editingCategory.id
-                ? { ...item, name: values.category }
-                : item
-            )
-          )
-        } else {
-          // Add
-          const newId = data.length ? Math.max(...data.map((i) => i.id)) + 1 : 1
-          const newCategory = { id: newId, name: values.category }
-          setData((prev) => [...prev, newCategory])
-        }
+      if (editingCategory) {
+        // Update
+        await CategoryService.updateCategory(editingCategory.id, {
+          name: values.category,
+        })
+        messageApi.success("Cập nhật danh mục thành công")
+      } else {
+        // Add
+        await CategoryService.addCategory({ name: values.category })
+        messageApi.success("Thêm danh mục thành công")
+      }
 
-        form.resetFields()
-        setLoading(false)
-        setIsFormModalOpen(false)
-      }, 1000)
+      form.resetFields()
+      setIsFormModalOpen(false)
+      fetchCategories()
     } catch (error) {
-      console.error("Validation failed:", error)
+      messageApi.error(error.message || "Không thể lưu danh mục")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -121,56 +135,65 @@ const CategoryTable = forwardRef((_, ref) => {
 
   return (
     <>
-      {/* <IconPickerItem /> */}
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: data.length,
-          onChange: (page, pageSize) =>
-            setPagination({ current: page, pageSize }),
-        }}
-      />
+      {contextHolder}
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <>
+          {/* <IconPickerItem /> */}
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: data.length,
+              onChange: (page, pageSize) =>
+                setPagination({ current: page, pageSize }),
+            }}
+          />
 
-      {/* Modal Xóa */}
-      <Modal
-        title="Xác nhận xóa"
-        open={isDeleteModalOpen}
-        onOk={confirmDelete}
-        confirmLoading={loading}
-        onCancel={() => setIsDeleteModalOpen(false)}
-        okText="Xóa"
-        cancelText="Hủy"
-      >
-        <p>
-          Bạn có chắc chắn muốn xóa danh mục <b>{selectedCategory?.name}</b>{" "}
-          không?
-        </p>
-      </Modal>
-
-      {/* Modal Thêm / Sửa */}
-      <Modal
-        title={editingCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
-        open={isFormModalOpen}
-        onOk={handleSubmit}
-        confirmLoading={loading}
-        onCancel={() => setIsFormModalOpen(false)}
-        okText="Lưu"
-        cancelText="Hủy"
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Tên danh mục"
-            name="category"
-            rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}
+          {/* Modal Xóa */}
+          <Modal
+            title="Xác nhận xóa"
+            open={isDeleteModalOpen}
+            onOk={confirmDelete}
+            confirmLoading={loading}
+            onCancel={() => setIsDeleteModalOpen(false)}
+            okText="Xóa"
+            cancelText="Hủy"
           >
-            <Input placeholder="Nhập tên danh mục" />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <p>
+              Bạn có chắc chắn muốn xóa danh mục <b>{selectedCategory?.name}</b>{" "}
+              không?
+            </p>
+          </Modal>
+
+          {/* Modal Thêm / Sửa */}
+          <Modal
+            title={editingCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
+            open={isFormModalOpen}
+            onOk={handleSubmit}
+            confirmLoading={loading}
+            onCancel={() => setIsFormModalOpen(false)}
+            okText="Lưu"
+            cancelText="Hủy"
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label="Tên danh mục"
+                name="category"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên danh mục" },
+                ]}
+              >
+                <Input placeholder="Nhập tên danh mục" />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </>
+      )}
     </>
   )
 })

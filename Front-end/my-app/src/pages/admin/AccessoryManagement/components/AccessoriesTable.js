@@ -1,6 +1,15 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Modal, Table, Typography } from "antd"
-import { forwardRef, useImperativeHandle, useState } from "react"
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Spin,
+  Table,
+  Typography,
+} from "antd"
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 import * as FaIcons from "react-icons/fa"
 import * as MdIcons from "react-icons/md"
 import * as AiIcons from "react-icons/ai"
@@ -20,6 +29,7 @@ import * as PiIcons from "react-icons/pi"
 import * as GoIcons from "react-icons/go"
 import * as GoIcons6 from "react-icons/fa6"
 import * as CiIcons from "react-icons/ci"
+import { AssociateService } from "../../../../services/AssociateService"
 
 const { Text } = Typography
 
@@ -44,10 +54,27 @@ const AccessoriesTable = forwardRef((_, ref) => {
   // Xử lý edit
   const [editingAccessory, setEditingAccessory] = useState(null)
   const [selectedAccessory, setSelectedAccessory] = useState(null)
+  const [messageApi, contextHolder] = message.useMessage()
 
   useImperativeHandle(ref, () => ({
     openAddForm: () => handleAdd(),
   }))
+
+  const fetchAssociates = async () => {
+    setLoading(true)
+    try {
+      const associates = await AssociateService.getAllAssociates()
+      setData(associates)
+    } catch (error) {
+      messageApi.error(error.message || "Không thể tải danh sách linh kiện")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAssociates()
+  }, [])
 
   // === Thêm mới ===
   const handleAdd = () => {
@@ -73,13 +100,19 @@ const AccessoriesTable = forwardRef((_, ref) => {
     setIsDeleteModalOpen(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
+    if (!selectedAccessory) return
     setLoading(true)
-    setTimeout(() => {
-      setData((prev) => prev.filter((item) => item.id !== selectedAccessory.id))
+    try {
+      await AssociateService.deleteAssociate(selectedAccessory.id)
+      messageApi.success("Xóa linh kiện thành công")
       setIsDeleteModalOpen(false)
+      fetchAssociates()
+    } catch (error) {
+      messageApi.error(error.message || "Không thể xóa linh kiện")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   // === Submit Form (Add/Edit) ===
@@ -88,40 +121,32 @@ const AccessoriesTable = forwardRef((_, ref) => {
       const values = await form.validateFields()
       setLoading(true)
 
-      setTimeout(() => {
-        if (editingAccessory) {
-          // Update
+      if (editingAccessory) {
+        // Update
+        await AssociateService.updateAssociate(
+          editingAccessory.id,
+          values.name,
+          values.type,
+          values.logo
+        )
+        messageApi.success("Cập nhật linh kiện thành công")
+      } else {
+        // Add
+        await AssociateService.addAssociate(
+          values.name,
+          values.type,
+          values.logo
+        )
+        messageApi.success("Thêm linh kiện thành công")
+      }
 
-          setData((prev) =>
-            prev.map((item) =>
-              item.id === editingAccessory.id
-                ? {
-                    ...item,
-                    name: values.name,
-                    type: values.type,
-                    logo: values.logo,
-                  }
-                : item
-            )
-          )
-        } else {
-          // Add
-          const newId = data.length ? Math.max(...data.map((i) => i.id)) + 1 : 1
-          const newAccessory = {
-            id: newId,
-            name: values.name,
-            type: values.type,
-            logo: values.logo,
-          }
-          setData((prev) => [...prev, newAccessory])
-        }
-
-        form.resetFields()
-        setLoading(false)
-        setIsFormModalOpen(false)
-      }, 1000)
+      form.resetFields()
+      setIsFormModalOpen(false)
+      fetchAssociates()
     } catch (error) {
-      console.error("Validation failed:", error)
+      messageApi.error(error.message || "Không thể lưu danh mục")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -193,81 +218,92 @@ const AccessoriesTable = forwardRef((_, ref) => {
 
   return (
     <>
-      {/* <IconPickerItem /> */}
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: data.length,
-          onChange: (page, pageSize) =>
-            setPagination({ current: page, pageSize }),
-        }}
-      />
+      {contextHolder}
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <>
+          {/* <IconPickerItem /> */}
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: data.length,
+              onChange: (page, pageSize) =>
+                setPagination({ current: page, pageSize }),
+            }}
+          />
 
-      {/* Modal Xóa */}
-      <Modal
-        title="Xác nhận xóa"
-        open={isDeleteModalOpen}
-        onOk={confirmDelete}
-        confirmLoading={loading}
-        onCancel={() => setIsDeleteModalOpen(false)}
-        okText="Xóa"
-        cancelText="Hủy"
-      >
-        <p>
-          Bạn có chắc chắn muốn xóa linh kiện <b>{selectedAccessory?.type}</b>{" "}
-          không?
-        </p>
-      </Modal>
+          {/* Modal Xóa */}
+          <Modal
+            title="Xác nhận xóa"
+            open={isDeleteModalOpen}
+            onOk={confirmDelete}
+            confirmLoading={loading}
+            onCancel={() => setIsDeleteModalOpen(false)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <p>
+              Bạn có chắc chắn muốn xóa linh kiện{" "}
+              <b>{selectedAccessory?.type}</b> không?
+            </p>
+          </Modal>
 
-      {/* Modal Thêm / Sửa */}
-      <Modal
-        title={editingAccessory ? "Chỉnh sửa bộ nhớ" : "Thêm bộ nhớ mới"}
-        open={isFormModalOpen}
-        onOk={handleSubmit}
-        confirmLoading={loading}
-        onCancel={() => setIsFormModalOpen(false)}
-        okText="Lưu"
-        cancelText="Hủy"
-      >
-        <Text type="secondary">
-          👉 Vào{" "}
-          <a
-            href="https://react-icons.github.io/react-icons/"
-            target="_blank"
-            rel="noreferrer"
+          {/* Modal Thêm / Sửa */}
+          <Modal
+            title={editingAccessory ? "Chỉnh sửa bộ nhớ" : "Thêm bộ nhớ mới"}
+            open={isFormModalOpen}
+            onOk={handleSubmit}
+            confirmLoading={loading}
+            onCancel={() => setIsFormModalOpen(false)}
+            okText="Lưu"
+            cancelText="Hủy"
           >
-            https://react-icons.github.io/react-icons/
-          </a>{" "}
-          để chọn icon và copy tên component (VD: FaCamera, FaBatteryFull)
-        </Text>
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Tên linh kiện"
-            name="type"
-            rules={[{ required: true, message: "Vui lòng nhập tên linh kiện" }]}
-          >
-            <Input placeholder="Nhập tên linh kiện" />
-          </Form.Item>
-          <Form.Item
-            label="Giá trị"
-            name="name"
-            rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
-          >
-            <Input placeholder="Nhập giá trị" />
-          </Form.Item>
-          <Form.Item
-            label="Icon"
-            name="logo"
-            rules={[{ required: true, message: "Vui lòng nhập giá trị icon" }]}
-          >
-            <Input placeholder="Nhập giá trị icon" />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Text type="secondary">
+              👉 Vào{" "}
+              <a
+                href="https://react-icons.github.io/react-icons/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://react-icons.github.io/react-icons/
+              </a>{" "}
+              để chọn icon và copy tên component (VD: FaCamera, FaBatteryFull)
+            </Text>
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label="Tên linh kiện"
+                name="type"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên linh kiện" },
+                ]}
+              >
+                <Input placeholder="Nhập tên linh kiện" />
+              </Form.Item>
+              <Form.Item
+                label="Giá trị"
+                name="name"
+                rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
+              >
+                <Input placeholder="Nhập giá trị" />
+              </Form.Item>
+              <Form.Item
+                label="Icon"
+                name="logo"
+                rules={[
+                  { required: true, message: "Vui lòng nhập giá trị icon" },
+                ]}
+              >
+                <Input placeholder="Nhập giá trị icon" />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </>
+      )}
     </>
   )
 })

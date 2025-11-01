@@ -9,7 +9,6 @@ import {
   Select,
   Space,
   Typography,
-  message,
 } from "antd"
 import dayjs from "dayjs"
 import { useEffect, useState } from "react"
@@ -150,6 +149,37 @@ function UserForm() {
                 ]}
               >
                 <Input placeholder="Nhập số điện thoại" allowClear />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Mật khẩu"
+                name="password"
+                rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+              >
+                <Input.Password placeholder="Nhập mật khẩu" />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Xác nhận mật khẩu"
+                dependencies={["password"]}
+                name="confirmPassword"
+                rules={[
+                  { required: true, message: "Vui lòng nhập lại mật khẩu" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve()
+                      }
+                      return Promise.reject(new Error("Mật khẩu không khớp"))
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder="Nhập lại mật khẩu" />
               </Form.Item>
             </Col>
 
