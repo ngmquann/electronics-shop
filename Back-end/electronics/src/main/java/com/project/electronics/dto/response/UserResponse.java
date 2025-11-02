@@ -3,6 +3,8 @@ package com.project.electronics.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class UserResponse {
     private String address;
     private String email;
     private String image;
+    private LocalDate dateOfBirth;
 }

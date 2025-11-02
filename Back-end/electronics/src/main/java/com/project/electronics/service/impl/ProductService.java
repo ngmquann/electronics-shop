@@ -246,6 +246,58 @@ public class ProductService implements IProductService {
 
     }
 
+    @Override
+    public List<ProductResponse> getAllProductByAdmin() {
+        return productRepository.findAll()
+                .stream()
+                .map(p -> ProductResponse.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .note(p.getNote())
+                        .detail(p.getDetail())
+                        .categoryId(p.getCategory().getId())
+                        .categoryName(p.getCategory().getName())
+                        .associates(
+                                p.getAssociates().stream()
+                                        .map(a -> AssociateResponse.builder()
+                                                .id(a.getId())
+                                                .name(a.getName())
+                                                .logo(a.getLogo())
+                                                .type(a.getType())
+                                                .build())
+                                        .toList()
+                        )
+                        .memories(
+                                p.getMemories().stream()
+                                        .map(m -> MemoryResponse.builder()
+                                                .id(m.getId())
+                                                .name(m.getName())
+                                                .price(m.getPrice())
+                                                .build())
+                                        .toList()
+                        )
+                        .colors(
+                                p.getColors().stream()
+                                        .map(c -> ColorResponse.builder()
+                                                .id(c.getId())
+                                                .name(c.getName())
+                                                .price(c.getPrice())
+                                                .build())
+                                        .toList()
+                        )
+                        .imageData(
+                                p.getImages().stream()
+                                        .map(i -> ImageResponse.builder()
+                                                .id(i.getId())
+                                                .data(i.getData())
+                                                .build())
+                                        .toList()
+                        )
+                        .build()
+                )
+                .toList();
+    }
+
     private UserEntity resolveUserFromRequest(HttpServletRequest request) {
         try {
             String headerAuth = request.getHeader("Authorization");

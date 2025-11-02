@@ -40,6 +40,10 @@ public class ProductController {
     public ResponseEntity<List<HomeProductResponse>> getAllProductByCategoryId( @RequestParam Long categoryId,HttpServletRequest request) {
         return ResponseEntity.ok(productService.getAllByCategory(categoryId,request));
     }
+    @GetMapping("/by-admin")
+    public ResponseEntity<List<ProductResponse>> getAllProductByAdmin() {
+        return ResponseEntity.ok(productService.getAllProductByAdmin());
+    }
     @GetMapping("/by-id")
     public ResponseEntity<ProductResponse> getProductById(@RequestParam Long productId) {
         return ResponseEntity.ok(productService.getProductById(productId));

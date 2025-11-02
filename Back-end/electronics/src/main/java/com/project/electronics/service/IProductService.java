@@ -16,5 +16,6 @@ public interface IProductService {
     String create(ProductCreateRequest req);
     String update(ProductCreateRequest req);
     ProductResponse getProductById(Long id);
+    List<ProductResponse> getAllProductByAdmin();
 }
 
