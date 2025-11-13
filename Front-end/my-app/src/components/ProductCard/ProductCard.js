@@ -77,28 +77,55 @@ import { FiHeart } from "react-icons/fi"
 import { FaHeart } from "react-icons/fa"
 import "./ProductCard.css"
 import { useNavigate } from "react-router-dom"
+import favoriteApi from "../../api/favoriteApi"
+import { message } from "antd"
 
-const ProductCard = ({ image, name, price }) => {
-  const [liked, setLiked] = useState(false)
+const ProductCard = ({ favorite, id, images, name, price }) => {
   const navigate = useNavigate()
 
-  const handleLikeClick = (e) => {
-    e.stopPropagation() // tránh trigger navigate
-    setLiked(!liked)
+  const [liked, setLiked] = useState(favorite)
+  const [loading, setLoading] = useState(false)
+  const [messageApi, contextHolder] = message.useMessage()
+
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation() 
+
+    setLoading(true)
+    try {
+      const res =  await favoriteApi.toggleFavorite(id)
+      console.log(res)
+      setLiked(!liked)  
+    } catch (error) {
+      messageApi.error("Không thể cập nhật yêu thích")
+    } finally {
+      setLoading(false)
+    }
   }
 
+  const imageSrc = images
+    ? `data:image/jpeg;base64,${images}`
+    : "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
+
   return (
-    <div className="product-card" onClick={() => navigate("/product-detail")}>
-      <div className="wishlist" onClick={handleLikeClick}>
-        {liked ? <FaHeart color="red" /> : <FiHeart />}
+    <>
+      {contextHolder}
+
+      <div className="product-card" onClick={() => navigate(`/product-detail/${id}`)}>
+        
+        <div className="wishlist" onClick={handleToggleFavorite}>
+          {liked ? <FaHeart color="red" /> : <FiHeart />}
+        </div>
+
+        <img src={imageSrc} alt={name} />
+
+        <div className="product-information">
+          <div className="product-name">{name}</div>
+          <div className="price-product">${price}</div>
+        </div>
+
+        <button className="buy-btn">Buy Now</button>
       </div>
-      <img src={image} alt={name} />
-      <div className="product-information">
-        <div className="product-name">{name}</div>
-        <div className="price-product">${price}</div>
-      </div>
-      <button className="buy-btn">Buy Now</button>
-    </div>
+    </>
   )
 }
 

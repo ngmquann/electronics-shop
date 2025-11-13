@@ -27,11 +27,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/random")
-    public ResponseEntity<?> randomHomeProducts(@RequestBody ProductNumber number, HttpServletRequest request) {
-
-        List<HomeProductResponse> data = productService.getRanDomHome(number.getNumber(), request);
+    public ResponseEntity<?> randomHomeProducts(@RequestParam int number, HttpServletRequest request) {
+        List<HomeProductResponse> data = productService.getRanDomHome(number, request);
         return ResponseEntity.ok(data);
     }
+
     @GetMapping("/search")
     public ResponseEntity<List<ProductSearchResponse>> searchSimple(@RequestParam String name) {
         return ResponseEntity.ok(productService.searchByName(name));

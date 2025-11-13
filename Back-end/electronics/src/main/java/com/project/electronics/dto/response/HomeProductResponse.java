@@ -12,5 +12,6 @@ public class HomeProductResponse {
     private String name;
     private String images;
     private String note;
+    private Double price;
     private boolean isFavorite;
 }

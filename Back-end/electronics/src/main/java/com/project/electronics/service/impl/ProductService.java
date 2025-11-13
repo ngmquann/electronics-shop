@@ -35,25 +35,42 @@ public class ProductService implements IProductService {
     @Override
     @Transactional(readOnly = true)
     public List<HomeProductResponse> getRanDomHome(int number, HttpServletRequest request) {
+
         UserEntity user = resolveUserFromRequest(request);
+
         return productRepository.findRandomProducts(number)
                 .stream()
-                .map(product -> HomeProductResponse.builder()
-                        .id(product.getId())
-                        .name(product.getName())
-                        .note(product.getNote())
-                        .images(
-                                product.getImages() != null && !product.getImages().isEmpty()
-                                        ? product.getImages().get(0).getData()
-                                        : null
-                        )
-                        .isFavorite(
-                                user != null && wishListRepository.existsByUser_IdAndProduct_Id(user.getId(), product.getId())
-                        )
-                        .build()
-                )
+                .map(product -> {
+
+                    String image = null;
+                    if (product.getImages() != null && !product.getImages().isEmpty()) {
+                        image = product.getImages().get(0).getData();
+                    }
+
+                    Double price = null;
+                    if (product.getMemories() != null && !product.getMemories().isEmpty()) {
+                        price = product.getMemories().get(0).getPrice();
+                    }
+
+                    boolean isFavorite = false;
+                    if (user != null) {
+                        isFavorite = wishListRepository.existsByUser_IdAndProduct_Id(
+                                user.getId(), product.getId()
+                        );
+                    }
+
+                    return HomeProductResponse.builder()
+                            .id(product.getId())
+                            .name(product.getName())
+                            .note(product.getNote())
+                            .images(image)
+                            .price(price)
+                            .isFavorite(isFavorite)
+                            .build();
+                })
                 .toList();
     }
+
 
     @Override
     public List<ProductSearchResponse> searchByName(String name) {
