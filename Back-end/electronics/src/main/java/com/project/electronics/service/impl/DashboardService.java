@@ -25,7 +25,7 @@ public class DashboardService implements IDashboardService {
     private final OrderRepository orderRepository;
     private final MemoryRepository memoryRepository;
     private final ColorRepository colorRepository;
-
+    private final CategoryRepository categoryRepository;
 
     @Override
     public DashboardResponse getDashboard() {
@@ -37,7 +37,7 @@ public class DashboardService implements IDashboardService {
         List<RevenueResponse> revenues = allOrders.stream()
                 .map(o -> RevenueResponse.builder()
                         .total(o.getTotal())
-                        .date(parseDate(o.getCreatedAt()))
+                        .date(o.getCreatedAt())
                         .build())
                 .toList();
 
@@ -120,14 +120,44 @@ public class DashboardService implements IDashboardService {
         }else{
             result = List.of();
         }
+
         return DashboardResponse.builder()
                 .userTotal(userTotal)
                 .productTotal(productTotal)
                 .orderTotal(orderTotal)
                 .revenues(revenues)
                 .orderResponses(result)
+                .categoryRates(calculateCategoryRates())
                 .build();
     }
+    public List<CategoryRateResponse> calculateCategoryRates() {
+        List<CategoryEntity> categories = categoryRepository.findAll();
+
+        int totalProducts = categories.stream()
+                .mapToInt(c -> c.getProducts().size())
+                .sum();
+
+        if (totalProducts == 0) {
+            return categories.stream()
+                    .map(c -> new CategoryRateResponse(
+                            c.getName(),
+                            0
+                    ))
+                    .collect(Collectors.toList());
+        }
+
+        return categories.stream()
+                .map(c -> {
+                    int count = c.getProducts().size();
+                    int percent = (int) Math.round((count * 100.0) / totalProducts);
+                    return new CategoryRateResponse(
+                            c.getName(),
+                            percent
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
     private Date parseDate(String createdAt) {
         if (createdAt == null || createdAt.isBlank()) return null;
         try {

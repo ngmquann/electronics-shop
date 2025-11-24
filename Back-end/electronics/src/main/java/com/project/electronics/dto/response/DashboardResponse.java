@@ -16,4 +16,5 @@ public class DashboardResponse {
     private int orderTotal;
     private List<RevenueResponse> revenues;
     private List<OrderResponse> orderResponses;
+    private List<CategoryRateResponse> categoryRates;
 }
