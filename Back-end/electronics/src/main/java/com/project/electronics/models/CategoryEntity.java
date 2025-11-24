@@ -22,6 +22,10 @@ public class CategoryEntity {
     @Column(name = "name", nullable = false, length = 150)
     private String name;
 
+    @Lob
+    @Column(name = "data", nullable = false, columnDefinition = "LONGTEXT")
+    private String data;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductEntity> products = new ArrayList<>();
 }

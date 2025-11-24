@@ -22,10 +22,12 @@ public class CategoryConverter {
         return CategoryEntity.builder()
                 .id(req.getId())
                 .name(req.getName())
+                .data(req.getData())
                 .build();
     }
     public void updateEntity(CategoryEntity entity, CategoryRequest req) {
         entity.setName(req.getName());
+        entity.setData(req.getData());
     }
 
 

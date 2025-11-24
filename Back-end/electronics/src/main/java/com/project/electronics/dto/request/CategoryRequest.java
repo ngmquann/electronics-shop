@@ -15,4 +15,7 @@ public class CategoryRequest {
     @NotBlank(message = "Category name is required")
     @Size(max = 150, message = "Category name must be <= 150 chars")
     private String name;
+
+    @NotBlank(message = "Category imagebase64 is required")
+    private String data;
 }
