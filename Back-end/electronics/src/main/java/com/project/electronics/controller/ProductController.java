@@ -82,6 +82,15 @@ public class ProductController {
         return ResponseEntity.ok(Map.of("message", rs));
     }
 
+    @DeleteMapping("/deletion/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.ok("Xóa sản phẩm thành công");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
 

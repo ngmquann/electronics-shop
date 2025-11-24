@@ -17,5 +17,6 @@ public interface IProductService {
     String update(ProductCreateRequest req);
     ProductResponse getProductById(Long id);
     List<ProductResponse> getAllProductByAdmin();
+    void deleteProduct(Long productId);
 }
 

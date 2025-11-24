@@ -32,6 +32,8 @@ public class ProductService implements IProductService {
     private final ProductConverter productConverter;
     private final AssociateRepository associateRepository;
     private final MemoryRepository memoryRepository;
+    private final OrderDetailRepository orderDetailRepository;
+
     @Override
     @Transactional(readOnly = true)
     public List<HomeProductResponse> getRanDomHome(int number, HttpServletRequest request) {
@@ -315,6 +317,20 @@ public class ProductService implements IProductService {
                 .toList();
     }
 
+    @Override
+    public void deleteProduct(Long productId) {
+
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        boolean hasOrders = orderDetailRepository.existsByProductId(productId);
+
+        if (hasOrders) {
+            throw new RuntimeException("Không thể xóa! Sản phẩm đang tồn tại trong đơn hàng.");
+        }
+
+        productRepository.delete(product);
+    }
     private UserEntity resolveUserFromRequest(HttpServletRequest request) {
         try {
             String headerAuth = request.getHeader("Authorization");

@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                             .requestMatchers(POST,  "api/product/create-product").hasRole("ADMIN")
                             .requestMatchers(POST,  "api/product/update-product").hasRole("ADMIN")
                             .requestMatchers(GET,  "api/product/by-admin").hasRole("ADMIN")
+                            .requestMatchers(DELETE,  "api/product/deletion/**").hasRole("ADMIN")
                             //associate
                             .requestMatchers( "api/associates/**").hasRole("ADMIN")
                             //user
