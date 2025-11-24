@@ -19,4 +19,11 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailEntity, 
     Optional<OrderDetailEntity> findByIdAndUserIdAndStatusFalse(Long id, Long userId);
     Optional<OrderDetailEntity> findByOrderIdAndProductIdAndStatusFalse(Long orderId, Long productId);
     boolean existsByProductId(Long productId);
+    Optional<OrderDetailEntity> findByOrderIdAndProductIdAndColorIdAndMemoryIdAndStatusFalse(
+            Long orderId,
+            Long productId,
+            Long colorId,
+            Long memoryId
+    );
+
 }

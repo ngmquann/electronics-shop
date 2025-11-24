@@ -115,6 +115,7 @@ public class CartService implements ICartService {
 
     @Override
     public boolean addCart(CartRequest cartRequest, HttpServletRequest httpServletRequest) {
+
         UserEntity user = resolveUserFromRequest(httpServletRequest);
 
         ProductEntity product = productRepository.findById(cartRequest.getProductId())
@@ -133,12 +134,18 @@ public class CartService implements ICartService {
                 ));
 
         Optional<OrderDetailEntity> existedOpt =
-                orderDetailRepository.findByOrderIdAndProductIdAndStatusFalse(cart.getId(), product.getId());
+                orderDetailRepository.findByOrderIdAndProductIdAndColorIdAndMemoryIdAndStatusFalse(
+                        cart.getId(),
+                        product.getId(),
+                        cartRequest.getColorId(),
+                        cartRequest.getMemoryId()
+                );
 
         if (existedOpt.isPresent()) {
             OrderDetailEntity existed = existedOpt.get();
             existed.setQuantity(existed.getQuantity() + cartRequest.getQuantity());
             orderDetailRepository.save(existed);
+
         } else {
             int qty = (cartRequest.getQuantity() != null && cartRequest.getQuantity() > 0)
                     ? cartRequest.getQuantity() : 1;
@@ -158,6 +165,7 @@ public class CartService implements ICartService {
 
         return true;
     }
+
 
     private UserEntity resolveUserFromRequest(HttpServletRequest request) {
         try {
