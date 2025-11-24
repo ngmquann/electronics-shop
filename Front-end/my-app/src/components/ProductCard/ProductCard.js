@@ -88,13 +88,13 @@ const ProductCard = ({ favorite, id, images, name, price }) => {
   const [messageApi, contextHolder] = message.useMessage()
 
   const handleToggleFavorite = async (e) => {
-    e.stopPropagation() 
+    e.stopPropagation()
 
     setLoading(true)
     try {
-      const res =  await favoriteApi.toggleFavorite(id)
+      const res = await favoriteApi.toggleFavorite(id)
       console.log(res)
-      setLiked(!liked)  
+      setLiked(!liked)
     } catch (error) {
       messageApi.error("Không thể cập nhật yêu thích")
     } finally {
@@ -110,8 +110,7 @@ const ProductCard = ({ favorite, id, images, name, price }) => {
     <>
       {contextHolder}
 
-      <div className="product-card" onClick={() => navigate(`/product-detail/${id}`)}>
-        
+      <div className="product-card" onClick={() => navigate(`/product/${id}`)}>
         <div className="wishlist" onClick={handleToggleFavorite}>
           {liked ? <FaHeart color="red" /> : <FiHeart />}
         </div>

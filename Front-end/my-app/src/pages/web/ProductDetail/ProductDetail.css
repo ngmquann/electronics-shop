@@ -98,6 +98,8 @@ body {
   gap: 8px;
   cursor: pointer;
   border-radius: 8px;
+  background-color: white;
+  color: black;
 }
 
 .storage button:hover {

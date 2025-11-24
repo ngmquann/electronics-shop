@@ -35,12 +35,7 @@ const { Text } = Typography
 
 const AccessoriesTable = forwardRef((_, ref) => {
   const [form] = Form.useForm()
-  const [data, setData] = useState([
-    { id: 1, name: "12MP", type: "Camera", logo: "FaCamera" },
-    { id: 2, name: '6.7"', type: "Screen size", logo: "MdScreenshot" },
-    { id: 3, name: "4323 mAh", type: "Battery capacity", logo: "GiBattery75" },
-    { id: 4, name: "12MP", type: "Front-camera", logo: "FaCameraRotate" },
-  ])
+  const [data, setData] = useState([])
 
   // Modal states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)

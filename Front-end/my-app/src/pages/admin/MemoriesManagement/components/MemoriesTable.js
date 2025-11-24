@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Modal, Table } from "antd"
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { Button, Form, Input, message, Modal, Spin, Table } from "antd"
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
+import { MemoryService } from "../../../../services/MemoryService"
 
 const MemoryTable = forwardRef((_, ref) => {
   const [form] = Form.useForm()
@@ -22,10 +23,27 @@ const MemoryTable = forwardRef((_, ref) => {
   // Xử lý edit
   const [editingMemory, setEditingMemory] = useState(null)
   const [selectedMemory, setSelectedMemory] = useState(null)
+  const [messageApi, contextHolder] = message.useMessage()
 
   useImperativeHandle(ref, () => ({
     openAddForm: () => handleAdd(),
   }))
+
+  const fetchMemory = async () => {
+    setLoading(true)
+    try {
+      const memories = await MemoryService.getAllMemory()
+      setData(memories)
+    } catch (error) {
+      messageApi.error(error.message || "Không thể tải danh sách bộ nhớ")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchMemory()
+  }, [])
 
   // === Thêm mới ===
   const handleAdd = () => {
@@ -47,13 +65,19 @@ const MemoryTable = forwardRef((_, ref) => {
     setIsDeleteModalOpen(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
+    if (!selectedMemory) return
     setLoading(true)
-    setTimeout(() => {
-      setData((prev) => prev.filter((item) => item.id !== selectedMemory.id))
+    try {
+      await MemoryService.deleteMemory(selectedMemory.id)
+      messageApi.success("Xóa bộ nhớ thành công")
       setIsDeleteModalOpen(false)
+      fetchMemory()
+    } catch (error) {
+      messageApi.error(error.message || "Không thể xóa bộ nhớ")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   // === Submit Form (Add/Edit) ===
@@ -62,33 +86,27 @@ const MemoryTable = forwardRef((_, ref) => {
       const values = await form.validateFields()
       setLoading(true)
 
-      setTimeout(() => {
-        if (editingMemory) {
-          // Update
-          setData((prev) =>
-            prev.map((item) =>
-              item.id === editingMemory.id
-                ? { ...item, name: values.memory, price: values.price }
-                : item
-            )
-          )
-        } else {
-          // Add
-          const newId = data.length ? Math.max(...data.map((i) => i.id)) + 1 : 1
-          const newMemory = {
-            id: newId,
-            name: values.memory,
-            price: values.price,
-          }
-          setData((prev) => [...prev, newMemory])
-        }
+      if (editingMemory) {
+        // Update
+        await MemoryService.updateMemory(
+          editingMemory.id,
+          values.memory,
+          values.price
+        )
+        messageApi.success("Cập nhật bộ nhớ thành công")
+      } else {
+        // Add
+        await MemoryService.addMemory(values.memory, values.price)
+        messageApi.success("Thêm bộ nhớ thành công")
+      }
 
-        form.resetFields()
-        setLoading(false)
-        setIsFormModalOpen(false)
-      }, 1000)
+      form.resetFields()
+      setIsFormModalOpen(false)
+      fetchMemory()
     } catch (error) {
-      console.error("Validation failed:", error)
+      messageApi.error(error.message || "Không thể lưu danh mục")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -127,62 +145,72 @@ const MemoryTable = forwardRef((_, ref) => {
 
   return (
     <>
-      {/* <IconPickerItem /> */}
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: data.length,
-          onChange: (page, pageSize) =>
-            setPagination({ current: page, pageSize }),
-        }}
-      />
+      {contextHolder}
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <>
+          {/* <IconPickerItem /> */}
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: data.length,
+              onChange: (page, pageSize) =>
+                setPagination({ current: page, pageSize }),
+            }}
+          />
 
-      {/* Modal Xóa */}
-      <Modal
-        title="Xác nhận xóa"
-        open={isDeleteModalOpen}
-        onOk={confirmDelete}
-        confirmLoading={loading}
-        onCancel={() => setIsDeleteModalOpen(false)}
-        okText="Xóa"
-        cancelText="Hủy"
-      >
-        <p>
-          Bạn có chắc chắn muốn xóa bộ nhớ <b>{selectedMemory?.name}</b> không?
-        </p>
-      </Modal>
+          {/* Modal Xóa */}
+          <Modal
+            title="Xác nhận xóa"
+            open={isDeleteModalOpen}
+            onOk={confirmDelete}
+            confirmLoading={loading}
+            onCancel={() => setIsDeleteModalOpen(false)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <p>
+              Bạn có chắc chắn muốn xóa bộ nhớ <b>{selectedMemory?.name}</b>{" "}
+              không?
+            </p>
+          </Modal>
 
-      {/* Modal Thêm / Sửa */}
-      <Modal
-        title={editingMemory ? "Chỉnh sửa bộ nhớ" : "Thêm bộ nhớ mới"}
-        open={isFormModalOpen}
-        onOk={handleSubmit}
-        confirmLoading={loading}
-        onCancel={() => setIsFormModalOpen(false)}
-        okText="Lưu"
-        cancelText="Hủy"
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Tên bộ nhớ"
-            name="memory"
-            rules={[{ required: true, message: "Vui lòng nhập tên bộ nhớ" }]}
+          {/* Modal Thêm / Sửa */}
+          <Modal
+            title={editingMemory ? "Chỉnh sửa bộ nhớ" : "Thêm bộ nhớ mới"}
+            open={isFormModalOpen}
+            onOk={handleSubmit}
+            confirmLoading={loading}
+            onCancel={() => setIsFormModalOpen(false)}
+            okText="Lưu"
+            cancelText="Hủy"
           >
-            <Input placeholder="Nhập tên bộ nhớ" />
-          </Form.Item>
-          <Form.Item
-            label="Giá"
-            name="price"
-            rules={[{ required: true, message: "Vui lòng nhập giá" }]}
-          >
-            <Input placeholder="Nhập giá" />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label="Tên bộ nhớ"
+                name="memory"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên bộ nhớ" },
+                ]}
+              >
+                <Input placeholder="Nhập tên bộ nhớ" />
+              </Form.Item>
+              <Form.Item
+                label="Giá"
+                name="price"
+                rules={[{ required: true, message: "Vui lòng nhập giá" }]}
+              >
+                <Input placeholder="Nhập giá" />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </>
+      )}
     </>
   )
 })

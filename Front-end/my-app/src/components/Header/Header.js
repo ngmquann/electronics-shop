@@ -5,14 +5,17 @@ import { FiUser } from "react-icons/fi"
 import { GrFavorite } from "react-icons/gr"
 import { PiShoppingCart } from "react-icons/pi"
 import "./Header.css"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode"
 import { MdAccountCircle } from "react-icons/md"
 import { IoLogOut } from "react-icons/io5"
 import { clearAuth } from "../../utils/storage"
+import { IoMdKey } from "react-icons/io"
+import { CiDeliveryTruck } from "react-icons/ci"
 
 function Header() {
   const navigation = useNavigate()
+  const location = useLocation()
   const token = localStorage.getItem("access_token")
   let userData
   let isAdmin = false
@@ -24,21 +27,46 @@ function Header() {
     isAdmin = userData.role === "ADMIN"
   }
 
+  const navigationItems = [
+    { label: "Home", path: "/" },
+    { label: "About", path: "/about" },
+    { label: "Contact Us", path: "/contact" },
+    { label: "Blog", path: "/blog" },
+  ]
+
   const itemDropdownForUser = [
     {
       key: "0",
       label: (
         <a rel="noopener noreferrer" href="/">
-          Trang cá nhân
+          Cập nhật thông tin
         </a>
       ),
       icon: <MdAccountCircle />,
     },
     {
+      key: "1",
+      label: (
+        <a rel="noopener noreferrer" href="/">
+          Đổi mật khẩu
+        </a>
+      ),
+      icon: <IoMdKey />,
+    },
+    {
+      key: "2",
+      label: (
+        <a rel="noopener noreferrer" href="/">
+          Theo dõi đơn hàng
+        </a>
+      ),
+      icon: <CiDeliveryTruck />,
+    },
+    {
       type: "divider",
     },
     {
-      key: "1",
+      key: "3",
       label: (
         <a
           rel="noopener noreferrer"
@@ -83,6 +111,9 @@ function Header() {
       icon: <IoLogOut />,
     },
   ]
+
+  const isActive = (path) => location.pathname === path
+
   return (
     <div className="header">
       <div className="logo">
@@ -97,10 +128,17 @@ function Header() {
       </div>
       <div className="right-section">
         <div className="navigation">
-          <p className="navigation-item">Home</p>
-          <p className="navigation-item unactive">About</p>
-          <p className="navigation-item unactive">Contact Us</p>
-          <p className="navigation-item unactive">Blog</p>
+          {navigationItems.map((item) => (
+            <p
+              key={item.path}
+              className={`navigation-item ${
+                isActive(item.path) ? "active" : "unactive"
+              }`}
+              onClick={() => navigation(item.path)}
+            >
+              {item.label}
+            </p>
+          ))}
         </div>
         <div className="list-icon">
           <GrFavorite className="icon-item" />

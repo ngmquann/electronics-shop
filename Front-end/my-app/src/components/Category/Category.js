@@ -26,6 +26,7 @@ function CategoryItem({ icon, label }) {
           fontWeight: "500",
           marginTop: "8px",
           marginBottom: "0",
+          textAlign: "center",
         }}
       >
         {label}

@@ -1,16 +1,51 @@
-import { Form, Input, Row, Col, Select, Upload, Button, Space } from "antd"
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Select,
+  Upload,
+  Button,
+  message,
+  Spin,
+} from "antd"
 import { UploadOutlined } from "@ant-design/icons"
 import TextArea from "antd/es/input/TextArea"
-
-const categoryOptions = [
-  { label: "Điện thoại", value: 1 },
-  { label: "Laptop", value: 2 },
-  { label: "Máy tính bảng", value: 3 },
-]
+import { useEffect, useState } from "react"
+import { CategoryService } from "../../../../services/CategoryService"
 
 function Step1BasicInfo({ form, images, setImages }) {
+  const [category, setCategory] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [messageApi, contextHolder] = message.useMessage()
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true)
+      try {
+        const categories = await CategoryService.getAllCategories()
+        setCategory(categories)
+      } catch (error) {
+        messageApi.error(error.message || "Không thể tải danh sách danh mục")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  const handleImageChange = (info) => {
+    setImages(info.fileList)
+  }
+
+  const handleRemoveImage = (uid) => {
+    setImages(images.filter((img) => img.uid !== uid))
+  }
+
   return (
     <>
+      {contextHolder}
       <Form.Item
         label="Tên sản phẩm"
         name="name"
@@ -32,49 +67,43 @@ function Step1BasicInfo({ form, images, setImages }) {
         </Col>
       </Row>
 
-      <Form.Item
-        label="Danh mục"
-        name="category"
-        rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
-      >
-        <Select
-          options={categoryOptions}
-          placeholder="Chọn danh mục sản phẩm"
-        />
-      </Form.Item>
+      {loading ? (
+        <Spin />
+      ) : (
+        <Form.Item
+          label="Danh mục"
+          name="category"
+          rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+        >
+          {/* <Select options={category} placeholder="Chọn danh mục sản phẩm" /> */}
+          <Select placeholder="Chọn danh mục sản phẩm">
+            {category.map((item) => (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      )}
 
-      <Form.Item label="Hình ảnh sản phẩm" name="images">
+      <Form.Item
+        label="Hình ảnh sản phẩm"
+        name="images"
+        rules={[
+          { required: true, message: "Vui lòng tải lên ít nhất 1 hình ảnh" },
+        ]}
+      >
         <Upload
           listType="picture"
           multiple
+          fileList={images}
           beforeUpload={() => false}
-          onChange={(info) => {
-            const files = info.fileList.map((f) => ({
-              uid: f.uid,
-              name: f.name,
-              url: URL.createObjectURL(f.originFileObj),
-            }))
-            setImages(files)
-          }}
+          onChange={handleImageChange}
+          onRemove={handleRemoveImage}
+          accept="image/*"
         >
           <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
         </Upload>
-
-        <Space wrap style={{ marginTop: 12 }}>
-          {images.map((img) => (
-            <img
-              key={img.uid}
-              src={img.url}
-              alt={img.name}
-              width={80}
-              style={{
-                borderRadius: 8,
-                border: "1px solid #ddd",
-                objectFit: "cover",
-              }}
-            />
-          ))}
-        </Space>
       </Form.Item>
     </>
   )

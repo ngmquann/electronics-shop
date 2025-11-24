@@ -16,7 +16,7 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Dashboard", "/dashboard", <FaChartPie />),
+  getItem("Dashboard", "", <FaChartPie />),
   getItem("Quản lý người dùng", "/user", <FaUser />),
   getItem("Quản lý danh mục", "/category", <TbCategoryPlus />),
   getItem("Quản lý linh kiện", "/accessories", <FaMicrochip />),
@@ -105,7 +105,7 @@ function CommonAdmin() {
           </div>
           <Menu
             theme="dark"
-            defaultSelectedKeys={["/admin/dashboard"]}
+            defaultSelectedKeys={[""]}
             onClick={handleMenuClick}
             mode="inline"
             items={items}

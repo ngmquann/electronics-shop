@@ -1,17 +1,34 @@
-import { Checkbox, Form, Input, Space, Typography } from "antd"
+import { Checkbox, Form, Input, Space, Typography, Spin, message } from "antd"
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons"
+import { useEffect, useState } from "react"
+import { MemoryService } from "../../../../services/MemoryService"
 
 const { Title } = Typography
 
 function Step2Config() {
-  const memoryOptions = [
-    { id: 1, name: "128GB", price: 0 },
-    { id: 2, name: "256GB", price: 1000000 },
-    { id: 3, name: "512GB", price: 2000000 },
-  ]
+  const [memoryOptions, setMemoryOptions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [messageApi, contextHolder] = message.useMessage()
+
+  useEffect(() => {
+    const fetchMemories = async () => {
+      setLoading(true)
+      try {
+        const memories = await MemoryService.getAllMemory()
+        setMemoryOptions(memories)
+      } catch (error) {
+        messageApi.error(error.message || "Không thể tải danh sách bộ nhớ")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMemories()
+  }, [])
 
   return (
     <>
+      {contextHolder}
       <Title level={5}>Màu sắc</Title>
       <Form.List name="colors">
         {(fields, { add, remove }) => (
@@ -38,9 +55,6 @@ function Step2Config() {
                 <PlusCircleOutlined onClick={() => add()} />
               </Space>
             ))}
-            {/* <Button type="dashed" icon={<PlusOutlined />} onClick={() => add()}>
-              Thêm màu mới
-            </Button> */}
           </>
         )}
       </Form.List>
@@ -48,23 +62,25 @@ function Step2Config() {
       <Title level={5} style={{ marginTop: 24 }}>
         Bộ nhớ
       </Title>
-      <Form.Item
-        name="memories"
-        rules={[{ required: true, message: "Chọn ít nhất một bộ nhớ" }]}
-      >
-        <Checkbox.Group style={{ gap: 6 }}>
-          {memoryOptions.map((item) => (
-            <Checkbox key={item.id} value={item.id}>
-              {item.name}{" "}
-              {item.price > 0 && (
+      {loading ? (
+        <Spin />
+      ) : (
+        <Form.Item
+          name="memories"
+          rules={[{ required: true, message: "Chọn ít nhất một bộ nhớ" }]}
+        >
+          <Checkbox.Group style={{ gap: 6 }}>
+            {memoryOptions.map((item) => (
+              <Checkbox key={item.id} value={item.id}>
+                {item.name}{" "}
                 <span style={{ color: "#888" }}>
-                  (+{item.price.toLocaleString("vi-VN")}₫)
+                  ({item.price.toLocaleString("vi-VN")}₫)
                 </span>
-              )}
-            </Checkbox>
-          ))}
-        </Checkbox.Group>
-      </Form.Item>
+              </Checkbox>
+            ))}
+          </Checkbox.Group>
+        </Form.Item>
+      )}
     </>
   )
 }

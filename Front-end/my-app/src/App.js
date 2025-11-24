@@ -17,6 +17,9 @@ import SignupPage from "./pages/web/Auth/SignupPage"
 import CatalogPage from "./pages/web/Catalog/CatalogPage"
 import OrderManagement from "./pages/admin/OrderManagement"
 import OrderDetail from "./pages/admin/OrderManagement/OrderDetail"
+import EditProductForm from "./pages/admin/ProductManagement/EditProductForm"
+import ContactPage from "./pages/web/Contact/ContactPage"
+import Dashboard from "./pages/admin/Dashboard"
 
 function App() {
   const token = localStorage.getItem("access_token")
@@ -33,21 +36,24 @@ function App() {
       <Routes>
         <Route path="/*" element={<CommonWeb />}>
           <Route path="" element={<Home />} />
-          <Route path="product-detail" element={<ProductDetail />} />
+          <Route path="product/:id" element={<ProductDetail />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
           <Route path="catalog" element={<CatalogPage />} />
+          <Route path="contact" element={<ContactPage />} />
         </Route>
         <Route
           path="/admin/*"
           element={isAdmin ? <CommonAdmin /> : <Navigate to="/" />}
         >
+          <Route path="" element={<Dashboard />} />
           <Route path="user" element={<UserManagement />} />
           <Route path="user/add" element={<UserForm />} />
           <Route path="user/edit/:id" element={<UserForm />} />
           <Route path="category" element={<CategoryManagement />} />
           <Route path="product" element={<ProductManagement />} />
           <Route path="product/add" element={<ProductForm />} />
+          <Route path="product/edit/:id" element={<EditProductForm />} />
           <Route path="memories" element={<MemoriesManagement />} />
           <Route path="accessories" element={<AccessoriesManagement />} />
           <Route path="order" element={<OrderManagement />} />
