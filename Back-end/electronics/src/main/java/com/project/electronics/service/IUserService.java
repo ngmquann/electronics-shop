@@ -2,6 +2,7 @@ package com.project.electronics.service;
 
 
 
+import com.project.electronics.dto.request.UserChangePassword;
 import com.project.electronics.dto.request.UserRequest;
 import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
@@ -17,4 +18,5 @@ public interface IUserService {
     String setStatusUserByAdmin(Long userId) throws Exception;
     List<UserResponse> getAllUserResponses() ;
     void deleteUserById(Long userId) throws Exception;
+    String changePassword(Long userId, UserChangePassword request) throws Exception;
 }

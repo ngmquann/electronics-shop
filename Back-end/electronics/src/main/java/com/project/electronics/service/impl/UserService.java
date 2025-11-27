@@ -4,6 +4,7 @@ import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.converter.UserConverter;
 import com.project.electronics.customexceptions.DataNotFoundException;
 import com.project.electronics.customexceptions.PermissionDenyException;
+import com.project.electronics.dto.request.UserChangePassword;
 import com.project.electronics.dto.request.UserRequest;
 import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
@@ -182,6 +183,25 @@ public class UserService implements IUserService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException("User not found with id: " + userId));
         userRepository.delete(user);
+    }
+
+    @Override
+    public String changePassword(Long userId, UserChangePassword request) throws Exception {
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new Exception("Mật khẩu mới và xác nhận mật khẩu không trùng khớp");
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new Exception("Có vẻ như mật khẩu cũ không khớp");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return "Đổi mật khẩu thành công!";
     }
 
 }
