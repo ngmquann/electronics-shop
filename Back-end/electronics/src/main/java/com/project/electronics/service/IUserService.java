@@ -3,11 +3,13 @@ package com.project.electronics.service;
 
 
 import com.project.electronics.dto.request.UserChangePassword;
+import com.project.electronics.dto.request.UserProfileRequest;
 import com.project.electronics.dto.request.UserRequest;
 import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
 import com.project.electronics.dto.response.UserResponse;
 import com.project.electronics.models.UserEntity;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -19,4 +21,5 @@ public interface IUserService {
     List<UserResponse> getAllUserResponses() ;
     void deleteUserById(Long userId) throws Exception;
     String changePassword(Long userId, UserChangePassword request) throws Exception;
+    String updateProfile(HttpServletRequest rq, UserProfileRequest request) throws Exception;
 }

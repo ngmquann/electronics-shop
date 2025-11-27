@@ -5,6 +5,7 @@ import com.project.electronics.converter.UserConverter;
 import com.project.electronics.customexceptions.DataNotFoundException;
 import com.project.electronics.customexceptions.PermissionDenyException;
 import com.project.electronics.dto.request.UserChangePassword;
+import com.project.electronics.dto.request.UserProfileRequest;
 import com.project.electronics.dto.request.UserRequest;
 import com.project.electronics.dto.request.UserRequestAdmin;
 import com.project.electronics.dto.response.LoginResponse;
@@ -17,6 +18,7 @@ import com.project.electronics.repository.httpclient.OutboundIdentityClient;
 import com.project.electronics.repository.httpclient.OutboundUserClient;
 import com.project.electronics.service.IEmailService;
 import com.project.electronics.service.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
@@ -202,6 +204,42 @@ public class UserService implements IUserService {
         userRepository.save(user);
 
         return "Đổi mật khẩu thành công!";
+    }
+
+    @Override
+    public String updateProfile(HttpServletRequest rq, UserProfileRequest request) throws Exception {
+        UserEntity user = resolveUserFromRequest(rq);
+        if(user == null) {
+            throw new Exception("User not found");
+        }
+        user.setFullName(request.getFullName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setDateOfBirth(request.getDateOfBirth());
+        user.setAddress(request.getAddress());
+        user.setImage(request.getImage());
+
+        userRepository.save(user);
+
+        return "Cập nhật thông tin thành công";
+    }
+
+    private UserEntity resolveUserFromRequest(HttpServletRequest request) {
+        try {
+            String headerAuth = request.getHeader("Authorization");
+            if (headerAuth == null || !headerAuth.startsWith("Bearer ")) {
+                return null;
+            }
+            String token = headerAuth.substring(7);
+            if (jwtTokenUtil.isTokenExpired(token)) {
+                return null;
+            }
+            Long userId = jwtTokenUtil.extractUserId(token);
+            if (userId == null) return null;
+            return userRepository.findById(userId).orElse(null);
+        } catch (Exception ex) {
+            log.warn("resolveUserFromRequest failed: {}", ex.getMessage());
+            return null;
+        }
     }
 
 }

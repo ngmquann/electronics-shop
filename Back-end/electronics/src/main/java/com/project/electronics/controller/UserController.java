@@ -2,10 +2,7 @@ package com.project.electronics.controller;
 
 import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.dto.ApiError;
-import com.project.electronics.dto.request.UserChangePassword;
-import com.project.electronics.dto.request.UserLogin;
-import com.project.electronics.dto.request.UserRequest;
-import com.project.electronics.dto.request.UserRequestAdmin;
+import com.project.electronics.dto.request.*;
 import com.project.electronics.dto.response.LoginResponse;
 import com.project.electronics.dto.response.UserResponse;
 import com.project.electronics.models.UserEntity;
@@ -111,6 +108,17 @@ public class UserController {
             }
 
             String message = userService.changePassword(userId, userRequestAdmin);
+            return ResponseEntity.ok(Map.of("message", message));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UserProfileRequest userProfileRequest, HttpServletRequest request) throws Exception {
+        try {
+            String message = userService.updateProfile(request, userProfileRequest);
             return ResponseEntity.ok(Map.of("message", message));
         }
         catch (Exception e) {
