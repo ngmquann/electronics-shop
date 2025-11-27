@@ -1,11 +1,14 @@
 package com.project.electronics.controller;
 
 
+import com.project.electronics.components.JwtTokenUtil;
 import com.project.electronics.dto.request.ChangeStatusRequest;
 import com.project.electronics.dto.request.OrderRequestResponse;
 import com.project.electronics.dto.response.OrderResponse;
 import com.project.electronics.service.impl.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,6 +23,8 @@ import java.util.Map;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/booking")
     public ResponseEntity<?> orderProduct(
@@ -51,6 +56,22 @@ public class OrderController {
 
 
         return ResponseEntity.status(302).location(fe).build();
+    }
+    @GetMapping("/by-user")
+    public ResponseEntity<?> getAllOrderByUser( HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (headerAuth == null || !headerAuth.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid token");
+        }
+        String token = headerAuth.substring(7);
+
+        Long userId = jwtTokenUtil.extractUserId(token);
+
+        if (jwtTokenUtil.isTokenExpired(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token expired");
+        }
+        List<OrderResponse> result = orderService.getAllOrderResponseByUser(userId);
+        return ResponseEntity.ok(result);
     }
     @GetMapping("/by-admin")
     public ResponseEntity<?> getAllOrderByAdmin() {

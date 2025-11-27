@@ -142,6 +142,88 @@ public class OrderService implements IOrderService {
         return "Order changed successfully";
     }
 
+    @Override
+    public List<OrderResponse> getAllOrderResponseByUser(Long userId) {
+        List<OrderEntity> orders = orderRepository.findAllByUserIdAndStatus(userId,true);
+        if (orders.isEmpty()) return List.of();
+
+        Set<Long> memoryIds = new HashSet<>();
+        Set<Long> colorIds  = new HashSet<>();
+        for (OrderEntity o : orders) {
+            for (OrderDetailEntity d : o.getOrderDetails()) {
+                if (d.getMemoryId() != null) memoryIds.add(d.getMemoryId());
+                if (d.getColorId()  != null) colorIds.add(d.getColorId());
+            }
+        }
+
+        Map<Long, MemoryEntity> memoryMap = memoryIds.isEmpty()
+                ? Map.of()
+                : memoryRepository.findAllById(memoryIds)
+                .stream().collect(Collectors.toMap(MemoryEntity::getId, m -> m));
+        Map<Long, ColorEntity> colorMap = colorIds.isEmpty()
+                ? Map.of()
+                : colorRepository.findAllById(colorIds)
+                .stream().collect(Collectors.toMap(ColorEntity::getId, c -> c));
+
+        List<OrderResponse> result = new ArrayList<>();
+        for (OrderEntity order : orders) {
+            OrderResponse resp = new OrderResponse();
+            resp.setId(order.getId());
+            resp.setAddress(order.getAddress());
+            resp.setTotal(order.getTotal());
+            resp.setMethodDelivery(order.getMethodDelivery());
+            resp.setMethodPayment(order.getMethodPayment());
+            resp.setStatusMethodDelivery(order.getStatusMethodDelivery());
+            resp.setCreatedAt(order.getCreatedAt());
+            resp.setUpdatedAt(order.getUpdatedAt());
+
+            UserEntity u = order.getUser();
+            if (u != null) {
+                resp.setUser(UserBriefDto.builder()
+                        .id(u.getId())
+                        .fullName(u.getFullName())
+                        .phoneNumber(u.getPhoneNumber())
+                        .email(u.getEmail())
+                        .image(u.getImage())
+                        .build());
+            }
+
+            List<OrderItemResponse> itemDtos = new ArrayList<>();
+            for (OrderDetailEntity d : order.getOrderDetails()) {
+                OrderItemResponse it = new OrderItemResponse();
+                it.setId(d.getId());
+                it.setQuantity(d.getQuantity());
+
+                if (d.getProduct() != null) {
+                    it.setProductName(d.getProduct().getName());
+                }
+
+                if (d.getMemoryId() != null) {
+                    MemoryEntity mem = memoryMap.get(d.getMemoryId());
+                    if (mem != null) {
+                        it.setMemoryName(mem.getName());
+                        it.setMemoryPrice(mem.getPrice());
+                    }
+                }
+
+                if (d.getColorId() != null) {
+                    ColorEntity col = colorMap.get(d.getColorId());
+                    if (col != null) {
+                        it.setColorName(col.getName());
+                        it.setColorPrice(col.getPrice());
+                    }
+                }
+
+                itemDtos.add(it);
+            }
+            resp.setItems(itemDtos);
+
+            result.add(resp);
+        }
+
+        return result;
+    }
+
 
     private UserEntity resolveUserFromRequest(HttpServletRequest request) {
         try {

@@ -10,4 +10,5 @@ public interface IOrderService {
     List<OrderResponse> getAllOrderResponseList();
     String addOrder(OrderRequestResponse orderRequest);
     String changeStatusDelivery(ChangeStatusRequest request);
+    List<OrderResponse> getAllOrderResponseByUser(Long userId);
 }
