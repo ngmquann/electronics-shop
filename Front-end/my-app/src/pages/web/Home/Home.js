@@ -1,14 +1,5 @@
 import { Carousel, message, Spin } from "antd"
-import { BsSmartwatch } from "react-icons/bs"
-import { CiHeadphones } from "react-icons/ci"
-import { HiOutlineComputerDesktop } from "react-icons/hi2"
-import {
-  IoIosArrowBack,
-  IoIosArrowForward,
-  IoIosPhonePortrait,
-} from "react-icons/io"
-import { IoGameControllerOutline } from "react-icons/io5"
-import { LuCamera } from "react-icons/lu"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 import CategoryItem from "../../../components/Category/Category"
 import ProductTabs from "../../../components/ProductTabs/ProductTabs"
 import { useEffect, useState } from "react"
@@ -53,21 +44,11 @@ function Home() {
     "https://www.apple.com/v/iphone-17/a/images/meta/iphone-17_overview__d4o74q28yjma_og.png",
   ]
 
-  var listCategories = [
-    { icon: <IoIosPhonePortrait />, label: "Phones" },
-    { icon: <BsSmartwatch />, label: "Smart Watches" },
-    { icon: <LuCamera />, label: "Cameras" },
-    { icon: <CiHeadphones />, label: "Headphones" },
-    { icon: <HiOutlineComputerDesktop />, label: "Computers" },
-    { icon: <IoGameControllerOutline />, label: "Gaming" },
-  ]
-
   if (loading) {
     return <Spin fullscreen size="large" />
   }
   return (
     <>
-      {console.log(category)}
       {contextHolder}
       <Carousel autoplay>
         {listImgBanner.map((img, index) => (
@@ -144,7 +125,7 @@ function Home() {
                   padding: "0 8px",
                 }}
               >
-                <CategoryItem icon={<IoIosPhonePortrait />} label={cate.name} />
+                <CategoryItem icon={cate.data} label={cate.name} />
               </div>
             ))}
           </div>

@@ -53,6 +53,9 @@ public class ProductService implements IProductService {
                     if (product.getMemories() != null && !product.getMemories().isEmpty()) {
                         price = product.getMemories().get(0).getPrice();
                     }
+                    if (product.getColors() != null && !product.getColors().isEmpty()) {
+                        price += product.getColors().get(0).getPrice();
+                    }
 
                     boolean isFavorite = false;
                     if (user != null) {

@@ -29,4 +29,35 @@ export const AuthService = {
       throw error
     }
   },
+
+  async changePassword(oldPassword, newPassword, confirmPassword) {
+    try {
+      const res = await authApi.changePassword({
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      })
+      return res
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async getInfoUser() {
+    try {
+      const res = await authApi.getInfoUser()
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async updateInfoUser(data) {
+    try {
+      const res = await authApi.updateInfoUser(data)
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
 }

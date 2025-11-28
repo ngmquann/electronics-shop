@@ -44,6 +44,15 @@ public class CartService implements ICartService {
 
         for (OrderDetailEntity od : orderDetailEntityList) {
             var p = od.getProduct();
+            var selectedMemory = p.getMemories().stream()
+                    .filter(m -> m.getId().equals(od.getMemoryId()))
+                    .findFirst()
+                    .orElse(null);
+            var selectedColor = p.getColors().stream()
+                    .filter(c -> c.getId().equals(od.getColorId()))
+                    .findFirst()
+                    .orElse(null);
+
             CartResponse cartResponse = new CartResponse();
             cartResponse.setId(od.getId());
             cartResponse.setQuantity(od.getQuantity());
@@ -64,21 +73,24 @@ public class CartService implements ICartService {
                                             .toList()
                             )
                             .memories(
-                                    p.getMemories().stream()
-                                            .map(m -> MemoryResponse.builder()
-                                                    .id(m.getId())
-                                                    .name(m.getName())
-                                                    .build())
-                                            .toList()
+                                    selectedMemory == null ? List.of() :
+                                            List.of(
+                                                    MemoryResponse.builder()
+                                                            .id(selectedMemory.getId())
+                                                            .name(selectedMemory.getName())
+                                                            .build()
+                                            )
                             )
                             .colors(
-                                    p.getColors().stream()
-                                            .map(c -> ColorResponse.builder()
-                                                    .id(c.getId())
-                                                    .name(c.getName())
-                                                    .price(c.getPrice())
-                                                    .build())
-                                            .toList()
+                                    selectedColor == null
+                                            ? List.of()
+                                            : List.of(
+                                                    ColorResponse.builder()
+                                                            .id(selectedColor.getId())
+                                                            .name(selectedColor.getName())
+                                                            .price(selectedColor.getPrice())
+                                                            .build()
+                                    )
                             )
                             .imageData(
                                     p.getImages().stream()

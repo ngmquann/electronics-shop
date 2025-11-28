@@ -27,7 +27,7 @@ public class MemoryController {
         return ResponseEntity.ok(memoryService.getMemoryResponseById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody MemoryRequest request) {
         String msg = memoryService.createMemory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", msg));

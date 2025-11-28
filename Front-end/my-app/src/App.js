@@ -20,6 +20,13 @@ import OrderDetail from "./pages/admin/OrderManagement/OrderDetail"
 import EditProductForm from "./pages/admin/ProductManagement/EditProductForm"
 import ContactPage from "./pages/web/Contact/ContactPage"
 import Dashboard from "./pages/admin/Dashboard"
+import ShoppingCart from "./pages/web/Cart/CartPage"
+import Checkout from "./pages/web/Checkout/CheckoutPage"
+import OrderSuccess from "./pages/web/Checkout/OrderSuccess"
+import OrderTrackingPage from "./pages/web/OrderTrackingPage/OrderTrackingPage"
+import OrderListPage from "./pages/web/OrderTrackingPage/OrderListPage"
+import ChangePassword from "./pages/web/Auth/ChangePassword"
+import UserProfileUpdate from "./pages/web/Auth/UserProfileUpdate";
 
 function App() {
   const token = localStorage.getItem("access_token")
@@ -41,6 +48,13 @@ function App() {
           <Route path="signup" element={<SignupPage />} />
           <Route path="catalog" element={<CatalogPage />} />
           <Route path="contact" element={<ContactPage />} />
+          <Route path="cart" element={<ShoppingCart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="order-success" element={<OrderSuccess />} />
+          <Route path="order-tracking/:id" element={<OrderTrackingPage />} />
+          <Route path="order-tracking" element={<OrderListPage />} />
+          <Route path="change-password" element={<ChangePassword />} />
+          <Route path="update-info-user" element={<UserProfileUpdate />} />
         </Route>
         <Route
           path="/admin/*"

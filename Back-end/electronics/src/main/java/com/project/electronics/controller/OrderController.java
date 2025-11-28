@@ -46,10 +46,7 @@ public class OrderController {
 
 
         URI fe = UriComponentsBuilder
-                .fromHttpUrl("http://localhost:5173/payment/result")
-                .queryParam("status", "success")
-                .queryParam("code", "00")
-                .queryParam("message", result)
+                .fromHttpUrl("http://localhost:3000/order-success?orderId=" + orderId)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
@@ -84,4 +81,9 @@ public class OrderController {
         return ResponseEntity.ok(Map.of("message", message));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
+        OrderResponse result = orderService.getOrderById(id);
+        return ResponseEntity.ok(result);
+    }
 }

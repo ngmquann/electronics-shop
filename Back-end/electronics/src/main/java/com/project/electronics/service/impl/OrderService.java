@@ -1,6 +1,7 @@
 package com.project.electronics.service.impl;
 
 import com.project.electronics.components.JwtTokenUtil;
+import com.project.electronics.converter.OrderConverter;
 import com.project.electronics.dto.request.ChangeStatusRequest;
 import com.project.electronics.dto.request.OrderRequest;
 import com.project.electronics.dto.request.OrderRequestResponse;
@@ -28,6 +29,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final MemoryRepository memoryRepository;
     private final ColorRepository colorRepository;
+    private final OrderConverter orderConverter;
     @Override
     public List<OrderResponse> getAllOrderResponseList() {
         List<OrderEntity> orders = orderRepository.findAllByStatus(true);
@@ -196,6 +198,7 @@ public class OrderService implements IOrderService {
 
                 if (d.getProduct() != null) {
                     it.setProductName(d.getProduct().getName());
+                    it.setImageUrl(d.getProduct().getImages().get(0).getData());
                 }
 
                 if (d.getMemoryId() != null) {
@@ -222,6 +225,14 @@ public class OrderService implements IOrderService {
         }
 
         return result;
+    }
+
+    @Override
+    public OrderResponse getOrderById(Long orderId) {
+        OrderEntity existing = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        return orderConverter.toOrderResponse(existing);
     }
 
 

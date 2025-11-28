@@ -1,0 +1,150 @@
+.checkout-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 60px;
+}
+
+@media (max-width: 1024px) {
+  .checkout-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.summary-card h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.item-card {
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: none;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.item-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+}
+
+.item-price {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+.info-section {
+  margin: 15px 0;
+}
+
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-label {
+  color: #545454;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #000000;
+  font-weight: 400;
+  margin: 0;
+}
+
+.price-details {
+  margin-top: 15px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  line-height: 32px;
+  margin: 5px 0;
+}
+
+.price-row.total {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.payment-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.payment-card-vnpay {
+  border: 2px solid #000;
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 20px;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+}
+
+.payment-content-vnpay {
+  text-align: center;
+}
+
+.payment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.btn-pay {
+  min-width: 244px;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  border: none;
+}
+
+.btn-pay:hover {
+  background: #222 !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}

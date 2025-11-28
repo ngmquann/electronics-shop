@@ -146,7 +146,11 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
     }
-
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserResponses(HttpServletRequest request) throws Exception {
+        UserResponse response = userService.getUserResponses(request);
+        return ResponseEntity.ok(response);
+    }
 
 
 

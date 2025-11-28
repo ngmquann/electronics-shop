@@ -1,0 +1,57 @@
+.content-wrapper h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.shipping-option {
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shipping-option:hover {
+  border-color: #000;
+}
+
+.shipping-option.active {
+  border-color: #000;
+  background: #fafafa;
+}
+
+.shipping-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.shipping-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shipping-desc {
+  color: #17183b;
+  font-size: 14px;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.shipping-date {
+  font-size: 16px;
+  color: #17183b;
+}
+
+.date-picker {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+}
+
+.ant-picker-input > input {
+  font-size: 16px;
+  color: #17183b;
+}

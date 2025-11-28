@@ -14,4 +14,25 @@ export const CartService = {
       throw error
     }
   },
+
+  async changeQuantity(id, quantity) {
+    try {
+      const res = await cartApi.changeQuantity({
+        id,
+        quantity,
+      })
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
+
+  async getCartByUser() {
+    try {
+      const res = await cartApi.getCartByUser()
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
 }

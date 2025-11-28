@@ -15,4 +15,5 @@ public class OrderItemResponse {
     private Double memoryPrice;
     private Double colorPrice;
     private String colorName;
+    private String imageUrl;
 }

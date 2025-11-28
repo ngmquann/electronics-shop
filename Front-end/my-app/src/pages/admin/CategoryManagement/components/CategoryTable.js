@@ -1,7 +1,37 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, message, Modal, Spin, Table } from "antd"
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Spin,
+  Table,
+  Typography,
+} from "antd"
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
+import * as FaIcons from "react-icons/fa"
+import * as MdIcons from "react-icons/md"
+import * as AiIcons from "react-icons/ai"
+import * as BsIcons from "react-icons/bs"
+import * as BiIcons from "react-icons/bi"
+import * as IoIcons from "react-icons/io"
+import * as Io5Icons from "react-icons/io5"
+import * as RiIcons from "react-icons/ri"
+import * as GiIcons from "react-icons/gi"
+import * as TbIcons from "react-icons/tb"
+import * as LuIcons from "react-icons/lu"
+import * as FiIcons from "react-icons/fi"
+import * as SlIcons from "react-icons/sl"
+import * as CgIcons from "react-icons/cg"
+import * as TfiIcons from "react-icons/tfi"
+import * as PiIcons from "react-icons/pi"
+import * as GoIcons from "react-icons/go"
+import * as GoIcons6 from "react-icons/fa6"
+import * as CiIcons from "react-icons/ci"
 import { CategoryService } from "../../../../services/CategoryService"
+
+const { Text } = Typography
 
 const CategoryTable = forwardRef((_, ref) => {
   const [form] = Form.useForm()
@@ -19,7 +49,6 @@ const CategoryTable = forwardRef((_, ref) => {
   // Xử lý edit
   const [editingCategory, setEditingCategory] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
-
   const [messageApi, contextHolder] = message.useMessage()
 
   useImperativeHandle(ref, () => ({
@@ -52,7 +81,10 @@ const CategoryTable = forwardRef((_, ref) => {
   // === Sửa ===
   const handleEdit = (record) => {
     setEditingCategory(record)
-    form.setFieldsValue({ category: record.name })
+    form.setFieldsValue({
+      category: record.name,
+      icon: record.data,
+    })
     setIsFormModalOpen(true)
   }
 
@@ -87,11 +119,15 @@ const CategoryTable = forwardRef((_, ref) => {
         // Update
         await CategoryService.updateCategory(editingCategory.id, {
           name: values.category,
+          data: values.icon,
         })
         messageApi.success("Cập nhật danh mục thành công")
       } else {
         // Add
-        await CategoryService.addCategory({ name: values.category })
+        await CategoryService.addCategory({
+          name: values.category,
+          data: values.icon,
+        })
         messageApi.success("Thêm danh mục thành công")
       }
 
@@ -105,6 +141,33 @@ const CategoryTable = forwardRef((_, ref) => {
     }
   }
 
+  const allIcons = {
+    ...FaIcons,
+    ...MdIcons,
+    ...AiIcons,
+    ...BsIcons,
+    ...BiIcons,
+    ...IoIcons,
+    ...Io5Icons,
+    ...RiIcons,
+    ...GiIcons,
+    ...TbIcons,
+    ...LuIcons,
+    ...FiIcons,
+    ...SlIcons,
+    ...CgIcons,
+    ...TfiIcons,
+    ...PiIcons,
+    ...GoIcons,
+    ...GoIcons6,
+    ...CiIcons,
+  }
+
+  const getIconByName = (iconName) => {
+    const IconComponent = allIcons[iconName]
+    return IconComponent ? <IconComponent size={20} /> : <span>{iconName}</span>
+  }
+
   const columns = [
     {
       title: "STT",
@@ -116,6 +179,12 @@ const CategoryTable = forwardRef((_, ref) => {
       title: "Tên danh mục",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Icon",
+      dataIndex: "data",
+      key: "data",
+      render: (iconName) => getIconByName(iconName),
     },
     {
       title: "Hành động",
@@ -140,7 +209,6 @@ const CategoryTable = forwardRef((_, ref) => {
         <Spin size="large" />
       ) : (
         <>
-          {/* <IconPickerItem /> */}
           <Table
             rowKey="id"
             columns={columns}
@@ -180,6 +248,17 @@ const CategoryTable = forwardRef((_, ref) => {
             okText="Lưu"
             cancelText="Hủy"
           >
+            <Text type="secondary">
+              👉 Vào{" "}
+              <a
+                href="https://react-icons.github.io/react-icons/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://react-icons.github.io/react-icons/
+              </a>{" "}
+              để chọn icon và copy tên component (VD: FaCamera, FaBatteryFull)
+            </Text>
             <Form form={form} layout="vertical">
               <Form.Item
                 label="Tên danh mục"
@@ -189,6 +268,15 @@ const CategoryTable = forwardRef((_, ref) => {
                 ]}
               >
                 <Input placeholder="Nhập tên danh mục" />
+              </Form.Item>
+              <Form.Item
+                label="Icon"
+                name="icon"
+                rules={[
+                  { required: true, message: "Vui lòng nhập giá trị icon" },
+                ]}
+              >
+                <Input placeholder="Nhập giá trị icon" />
               </Form.Item>
             </Form>
           </Modal>

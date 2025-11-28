@@ -1,9 +1,9 @@
 import categoryApi from "../api/categoryApi"
 
 export const CategoryService = {
-  async addCategory(name) {
+  async addCategory(payload) {
     try {
-      const res = await categoryApi.addCategory(name)
+      const res = await categoryApi.addCategory(payload)
       return res.data
     } catch (error) {
       throw error
@@ -19,9 +19,9 @@ export const CategoryService = {
     }
   },
 
-  async updateCategory(id, name) {
+  async updateCategory(id, payload) {
     try {
-      const res = await categoryApi.updateCategory(id, name)
+      const res = await categoryApi.updateCategory(id, payload)
       return res.data
     } catch (error) {
       throw error

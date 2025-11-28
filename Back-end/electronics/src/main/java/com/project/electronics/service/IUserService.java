@@ -19,6 +19,7 @@ public interface IUserService {
     String addUserByAdmin(UserRequestAdmin userRequestAdmin) throws Exception;
     String setStatusUserByAdmin(Long userId) throws Exception;
     List<UserResponse> getAllUserResponses() ;
+    UserResponse getUserResponses(HttpServletRequest rq) throws Exception;
     void deleteUserById(Long userId) throws Exception;
     String changePassword(Long userId, UserChangePassword request) throws Exception;
     String updateProfile(HttpServletRequest rq, UserProfileRequest request) throws Exception;

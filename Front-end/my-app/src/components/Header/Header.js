@@ -12,8 +12,11 @@ import { IoLogOut } from "react-icons/io5"
 import { clearAuth } from "../../utils/storage"
 import { IoMdKey } from "react-icons/io"
 import { CiDeliveryTruck } from "react-icons/ci"
+import { useEffect, useState } from "react"
+import { AuthService } from "../../services/AuthService"
 
 function Header() {
+  const [avatar, setAvatar] = useState(null)
   const navigation = useNavigate()
   const location = useLocation()
   const token = localStorage.getItem("access_token")
@@ -38,27 +41,25 @@ function Header() {
     {
       key: "0",
       label: (
-        <a rel="noopener noreferrer" href="/">
+        <span onClick={() => navigation("/update-info-user")}>
           Cập nhật thông tin
-        </a>
+        </span>
       ),
       icon: <MdAccountCircle />,
     },
     {
       key: "1",
       label: (
-        <a rel="noopener noreferrer" href="/">
-          Đổi mật khẩu
-        </a>
+        <span onClick={() => navigation("/change-password")}>Đổi mật khẩu</span>
       ),
       icon: <IoMdKey />,
     },
     {
       key: "2",
       label: (
-        <a rel="noopener noreferrer" href="/">
+        <span onClick={() => navigation("/order-tracking")}>
           Theo dõi đơn hàng
-        </a>
+        </span>
       ),
       icon: <CiDeliveryTruck />,
     },
@@ -114,6 +115,14 @@ function Header() {
 
   const isActive = (path) => location.pathname === path
 
+  useEffect(() => {
+    if (token) {
+      AuthService.getInfoUser().then((res) => {
+        setAvatar(res.image)
+      })
+    }
+  }, [])
+
   return (
     <div className="header">
       <div className="logo">
@@ -142,7 +151,10 @@ function Header() {
         </div>
         <div className="list-icon">
           <GrFavorite className="icon-item" />
-          <PiShoppingCart className="icon-item" />
+          <PiShoppingCart
+            className="icon-item"
+            onClick={() => navigation("/cart")}
+          />
           {isLogin ? (
             <Dropdown
               menu={{
@@ -155,7 +167,10 @@ function Header() {
                 src={
                   <img
                     draggable={false}
-                    src="https://i.pinimg.com/736x/89/30/3f/89303fd48d31b02666805986a792c36c.jpg"
+                    src={
+                      avatar ||
+                      "https://i.pinimg.com/736x/89/30/3f/89303fd48d31b02666805986a792c36c.jpg"
+                    }
                     alt="avatar"
                   />
                 }

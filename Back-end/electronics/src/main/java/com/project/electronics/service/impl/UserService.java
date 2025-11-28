@@ -179,6 +179,15 @@ public class UserService implements IUserService {
                 .toList();
     }
 
+    @Override
+    public UserResponse getUserResponses(HttpServletRequest rq) throws Exception {
+        UserEntity user = resolveUserFromRequest(rq);
+        if(user == null) {
+            throw new Exception("User not found");
+        }
+        return userConverter.toUserResponse(userRepository.findById(user.getId()).get());
+    }
+
     @Transactional
     @Override
     public void deleteUserById(Long userId) {
