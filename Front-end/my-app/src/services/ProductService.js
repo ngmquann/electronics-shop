@@ -57,4 +57,15 @@ export const ProductService = {
       throw error
     }
   },
+
+  async getProductByCategory(cateId) {
+    try {
+      const res = await productApi.getProductByCategory(cateId)
+      console.log(res)
+
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
 }

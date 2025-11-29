@@ -93,22 +93,43 @@ public class ProductService implements IProductService {
     public List<HomeProductResponse> getAllByCategory(Long categoryId, HttpServletRequest request) {
         CategoryEntity categoryRef = categoryRepository.getReferenceById(categoryId);
         UserEntity user = resolveUserFromRequest(request);
+
         return productRepository.findAllByCategory(categoryRef)
                 .stream()
-                .map(product -> HomeProductResponse.builder()
-                        .id(product.getId())
-                        .name(product.getName())
-                        .note(product.getNote())
-                        .images(
-                                product.getImages() != null && !product.getImages().isEmpty()
-                                        ? product.getImages().get(0).getData()
-                                        : null
-                        )
-                        .isFavorite(
-                                user != null && wishListRepository.existsByUser_IdAndProduct_Id(user.getId(), product.getId())
-                        )
-                        .build()
-                )
+                .map(product -> {
+                    String image = null;
+                    if (product.getImages() != null && !product.getImages().isEmpty()) {
+                        image = product.getImages().get(0).getData();
+                    }
+
+                    Double price = null;
+                    Double memoryPrice = (product.getMemories() != null && !product.getMemories().isEmpty())
+                            ? product.getMemories().get(0).getPrice()
+                            : null;
+                    Double colorPrice = (product.getColors() != null && !product.getColors().isEmpty())
+                            ? product.getColors().get(0).getPrice()
+                            : null;
+
+                    if (memoryPrice != null) {
+                        price = memoryPrice + (colorPrice != null ? colorPrice : 0.0);
+                    } else if (colorPrice != null) {
+                        price = colorPrice;
+                    } else {
+                        price = null;
+                    }
+
+                    boolean isFavorite = (user != null)
+                            && wishListRepository.existsByUser_IdAndProduct_Id(user.getId(), product.getId());
+
+                    return HomeProductResponse.builder()
+                            .id(product.getId())
+                            .name(product.getName())
+                            .note(product.getNote())
+                            .images(image)
+                            .price(price)
+                            .isFavorite(isFavorite)
+                            .build();
+                })
                 .toList();
     }
 

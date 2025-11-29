@@ -125,7 +125,7 @@ function Home() {
                   padding: "0 8px",
                 }}
               >
-                <CategoryItem icon={cate.data} label={cate.name} />
+                <CategoryItem icon={cate.data} label={cate.name} cateId={cate.id} />
               </div>
             ))}
           </div>

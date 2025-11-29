@@ -229,10 +229,84 @@ public class OrderService implements IOrderService {
 
     @Override
     public OrderResponse getOrderById(Long orderId) {
-        OrderEntity existing = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Order not found with id: " + orderId
+                ));
 
-        return orderConverter.toOrderResponse(existing);
+        Set<Long> memoryIds = new HashSet<>();
+        Set<Long> colorIds  = new HashSet<>();
+
+        for (OrderDetailEntity d : order.getOrderDetails()) {
+            if (d.getMemoryId() != null) memoryIds.add(d.getMemoryId());
+            if (d.getColorId()  != null) colorIds.add(d.getColorId());
+        }
+
+        Map<Long, MemoryEntity> memoryMap = memoryIds.isEmpty()
+                ? Map.of()
+                : memoryRepository.findAllById(memoryIds)
+                .stream().collect(Collectors.toMap(MemoryEntity::getId, m -> m));
+
+        Map<Long, ColorEntity> colorMap = colorIds.isEmpty()
+                ? Map.of()
+                : colorRepository.findAllById(colorIds)
+                .stream().collect(Collectors.toMap(ColorEntity::getId, c -> c));
+
+        OrderResponse resp = new OrderResponse();
+        resp.setId(order.getId());
+        resp.setAddress(order.getAddress());
+        resp.setTotal(order.getTotal());
+        resp.setMethodDelivery(order.getMethodDelivery());
+        resp.setMethodPayment(order.getMethodPayment());
+        resp.setStatusMethodDelivery(order.getStatusMethodDelivery());
+        resp.setCreatedAt(order.getCreatedAt());
+        resp.setUpdatedAt(order.getUpdatedAt());
+
+        UserEntity u = order.getUser();
+        if (u != null) {
+            resp.setUser(UserBriefDto.builder()
+                    .id(u.getId())
+                    .fullName(u.getFullName())
+                    .phoneNumber(u.getPhoneNumber())
+                    .email(u.getEmail())
+                    .image(u.getImage())
+                    .build());
+        }
+
+        List<OrderItemResponse> itemDtos = new ArrayList<>();
+        for (OrderDetailEntity d : order.getOrderDetails()) {
+            OrderItemResponse it = new OrderItemResponse();
+            it.setId(d.getProduct().getId());
+            it.setQuantity(d.getQuantity());
+
+            if (d.getProduct() != null) {
+                it.setProductName(d.getProduct().getName());
+            }
+
+            if (d.getMemoryId() != null) {
+                MemoryEntity mem = memoryMap.get(d.getMemoryId());
+                if (mem != null) {
+                    it.setMemoryName(mem.getName());
+                    it.setMemoryPrice(mem.getPrice());
+                }
+            }
+
+            if (d.getColorId() != null) {
+                ColorEntity col = colorMap.get(d.getColorId());
+                if (col != null) {
+                    it.setColorName(col.getName());
+                    it.setColorPrice(col.getPrice());
+                }
+            }
+            if (d.getProduct() != null) {
+                it.setImageUrl(d.getProduct().getImages().get(0).getData());
+            }
+
+            itemDtos.add(it);
+        }
+        resp.setItems(itemDtos);
+
+        return resp;
     }
 
 

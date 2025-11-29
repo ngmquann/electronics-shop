@@ -5,7 +5,7 @@ import { OrderService } from "../../../services/OrderService"
 import { useNavigate } from "react-router-dom"
 
 const statusMapping = {
-  pending: { color: "orange", text: "Đang chờ lấy hàng" },
+  pending: { color: "orange", text: "Đang xử lý" },
   shipping: { color: "purple", text: "Đang giao hàng" },
   completed: { color: "green", text: "Đã giao thành công" },
   canceled: { color: "red", text: "Đã hủy" },

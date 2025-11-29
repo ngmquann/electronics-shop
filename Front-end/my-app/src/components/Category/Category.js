@@ -19,7 +19,7 @@ import * as GoIcons from "react-icons/go"
 import * as GoIcons6 from "react-icons/fa6"
 import * as CiIcons from "react-icons/ci"
 
-function CategoryItem({ icon, label }) {
+function CategoryItem({ icon, label, cateId }) {
   const navigate = useNavigate()
 
   const getIconByName = (iconName) => {
@@ -62,7 +62,7 @@ function CategoryItem({ icon, label }) {
         alignItems: "center",
         justifyContent: "center",
       }}
-      onClick={() => navigate("/catalog")}
+      onClick={() => navigate(`/catalog/${cateId}`)}
     >
       <div style={{ fontSize: "48px", width: "48px", height: "48px" }}>
         {getIconByName(icon)}

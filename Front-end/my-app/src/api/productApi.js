@@ -9,6 +9,8 @@ const productApi = {
   editProduct: (data) => axiosClient.post("/product/update-product", data),
   getAllProductByAdmin: () => axiosClient.get("/product/by-admin"),
   getProductById: (id) => axiosClient.get(`/product/by-id?productId=${id}`),
+  getProductByCategory: (cateId) =>
+    axiosClient.get(`/product/by-category?categoryId=${cateId}`),
 }
 
 export default productApi

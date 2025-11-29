@@ -26,7 +26,10 @@ import OrderSuccess from "./pages/web/Checkout/OrderSuccess"
 import OrderTrackingPage from "./pages/web/OrderTrackingPage/OrderTrackingPage"
 import OrderListPage from "./pages/web/OrderTrackingPage/OrderListPage"
 import ChangePassword from "./pages/web/Auth/ChangePassword"
-import UserProfileUpdate from "./pages/web/Auth/UserProfileUpdate";
+import UserProfileUpdate from "./pages/web/Auth/UserProfileUpdate"
+import AboutUs from "./pages/web/AboutUs/AboutUs"
+import BlogList from "./pages/web/Blog/BlogList"
+import BlogDetail from "./pages/web/Blog/BlogDetail"
 
 function App() {
   const token = localStorage.getItem("access_token")
@@ -46,7 +49,7 @@ function App() {
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
-          <Route path="catalog" element={<CatalogPage />} />
+          <Route path="catalog/:id" element={<CatalogPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="cart" element={<ShoppingCart />} />
           <Route path="checkout" element={<Checkout />} />
@@ -55,6 +58,9 @@ function App() {
           <Route path="order-tracking" element={<OrderListPage />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="update-info-user" element={<UserProfileUpdate />} />
+          <Route path="about-us" element={<AboutUs />} />
+          <Route path="blog" element={<BlogList />} />
+          <Route path="blog/:id" element={<BlogDetail />} />
         </Route>
         <Route
           path="/admin/*"

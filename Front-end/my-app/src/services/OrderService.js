@@ -17,4 +17,20 @@ export const OrderService = {
       throw error
     }
   },
+  async getListOrderByAdmin() {
+    try {
+      const res = await orderApi.getListOrderByAdmin()
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
+  async changeStatus(data) {
+    try {
+      const res = await orderApi.changeStatus(data)
+      return res.data
+    } catch (error) {
+      throw error
+    }
+  },
 }

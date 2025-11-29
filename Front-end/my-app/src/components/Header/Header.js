@@ -32,7 +32,7 @@ function Header() {
 
   const navigationItems = [
     { label: "Home", path: "/" },
-    { label: "About", path: "/about" },
+    { label: "About", path: "/about-us" },
     { label: "Contact Us", path: "/contact" },
     { label: "Blog", path: "/blog" },
   ]

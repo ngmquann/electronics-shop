@@ -41,7 +41,7 @@ public class DashboardService implements IDashboardService {
                         .build())
                 .toList();
 
-        List<OrderEntity> orders = orderRepository.findAllByStatusMethodDelivery("PENDING");
+        List<OrderEntity> orders = orderRepository.findOrderLatest();
 
         List<OrderResponse> result = new ArrayList<>();
         if (!orders.isEmpty()){
