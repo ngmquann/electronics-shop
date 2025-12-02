@@ -11,6 +11,7 @@ const productApi = {
   getProductById: (id) => axiosClient.get(`/product/by-id?productId=${id}`),
   getProductByCategory: (cateId) =>
     axiosClient.get(`/product/by-category?categoryId=${cateId}`),
+  deleteProduct: (id) => axiosClient.delete(`/product/deletion/${id}`),
 }
 
 export default productApi

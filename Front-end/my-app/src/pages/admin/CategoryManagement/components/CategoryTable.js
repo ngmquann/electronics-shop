@@ -29,6 +29,7 @@ import * as PiIcons from "react-icons/pi"
 import * as GoIcons from "react-icons/go"
 import * as GoIcons6 from "react-icons/fa6"
 import * as CiIcons from "react-icons/ci"
+import * as SiIcons from "react-icons/si"
 import { CategoryService } from "../../../../services/CategoryService"
 
 const { Text } = Typography
@@ -161,6 +162,7 @@ const CategoryTable = forwardRef((_, ref) => {
     ...GoIcons,
     ...GoIcons6,
     ...CiIcons,
+    ...SiIcons,
   }
 
   const getIconByName = (iconName) => {

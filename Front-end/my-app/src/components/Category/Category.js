@@ -18,6 +18,7 @@ import * as PiIcons from "react-icons/pi"
 import * as GoIcons from "react-icons/go"
 import * as GoIcons6 from "react-icons/fa6"
 import * as CiIcons from "react-icons/ci"
+import * as SiIcons from "react-icons/si"
 
 function CategoryItem({ icon, label, cateId }) {
   const navigate = useNavigate()
@@ -47,6 +48,7 @@ function CategoryItem({ icon, label, cateId }) {
     ...GoIcons,
     ...GoIcons6,
     ...CiIcons,
+    ...SiIcons,
   }
 
   return (

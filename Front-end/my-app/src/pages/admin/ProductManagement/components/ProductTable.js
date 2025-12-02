@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
-import { Button, Image, Modal, Table, Tag } from "antd"
+import { Button, Image, message, Modal, Table, Tag } from "antd"
 import { useEffect, useState } from "react"
 import { ProductService } from "../../../../services/ProductService"
 import { useNavigate } from "react-router-dom"
@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom"
 function ProductTable() {
   const navigate = useNavigate()
   const [data, setData] = useState([])
+  const [messageApi, contextHolder] = message.useMessage()
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -38,13 +40,19 @@ function ProductTable() {
     setIsDeleteModalOpen(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     setLoading(true)
-    setTimeout(() => {
+    try {
+      await ProductService.deleteProduct(selectedProduct.id)
       setData((prev) => prev.filter((item) => item.id !== selectedProduct.id))
       setIsDeleteModalOpen(false)
+      messageApi.success("Xóa sản phẩm thành công")
+    } catch (error) {
+      console.error(error)
+      messageApi.error("Lỗi khi xóa sản phẩm")
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   const columns = [
@@ -126,6 +134,7 @@ function ProductTable() {
 
   return (
     <>
+      {contextHolder}
       <Table
         rowKey="id"
         columns={columns}
