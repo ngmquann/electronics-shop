@@ -21,7 +21,7 @@ const ProductTabs = () => {
       const res1 = await ProductService.getProductHome(15)
       const res2 = await ProductService.getProductHome(10)
       const res3 = await ProductService.getProductHome(7)
-
+      console.log(res1)
       setTab1Data(res1)
       setTab2Data(res2)
       setTab3Data(res3)

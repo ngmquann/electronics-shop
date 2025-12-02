@@ -30,6 +30,7 @@ import UserProfileUpdate from "./pages/web/Auth/UserProfileUpdate"
 import AboutUs from "./pages/web/AboutUs/AboutUs"
 import BlogList from "./pages/web/Blog/BlogList"
 import BlogDetail from "./pages/web/Blog/BlogDetail"
+import FavoritePage from "./pages/web/FavoritePage/FavoritePage"
 
 function App() {
   const token = localStorage.getItem("access_token")
@@ -60,6 +61,7 @@ function App() {
           <Route path="update-info-user" element={<UserProfileUpdate />} />
           <Route path="about-us" element={<AboutUs />} />
           <Route path="blog" element={<BlogList />} />
+          <Route path="favorite" element={<FavoritePage />} />
           <Route path="blog/:id" element={<BlogDetail />} />
         </Route>
         <Route

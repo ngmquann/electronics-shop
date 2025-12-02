@@ -365,7 +365,12 @@ const searchProducts = async (keyword) => {
           ))}
         </div>
         <div className="list-icon">
-          <GrFavorite className="icon-item" />
+         <GrFavorite 
+            className="icon-item" 
+            onClick={() => navigation("/favorite")}
+            style={{ cursor: "pointer" }}
+            title="Danh sách yêu thích"
+          />
           <PiShoppingCart
             className="icon-item"
             onClick={() => navigation("/cart")}
