@@ -13,7 +13,6 @@ public class AIProductResponse {
     private Long id;
     private String name;
     private String categoryName;
-    private List<AssociateResponse> associates;
-    private List<MemoryResponse> memories;
-    private List<ColorResponse> colors;
+    private String description;
+    private String image;
 }

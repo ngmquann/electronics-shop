@@ -87,7 +87,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 new AntPathRequestMatcher(prefix + "/category/all", "GET"),
                 new AntPathRequestMatcher(prefix + "/category/get-by/**", "GET"),
                 //order
-                new AntPathRequestMatcher(prefix + "/order/booking", "GET")
+                new AntPathRequestMatcher(prefix + "/order/booking", "GET"),
+                // ai assistant
+                 new AntPathRequestMatcher(prefix + "/ai/question", "POST")
         );
 
         return bypass.stream().anyMatch(m -> m.matches(request));

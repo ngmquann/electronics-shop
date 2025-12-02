@@ -46,7 +46,8 @@ public class WebSecurityConfig {
                                     String.format("%s/product/search", apiPrefix),
                                     String.format("%s/product/by-category", apiPrefix),
                                     String.format("%s/product/by-id", apiPrefix),
-                                    String.format("%s/order/booking", apiPrefix)
+                                    String.format("%s/order/booking", apiPrefix),
+                                    String.format("%s/ai/question", apiPrefix)
 
                             ).permitAll()
                             //product

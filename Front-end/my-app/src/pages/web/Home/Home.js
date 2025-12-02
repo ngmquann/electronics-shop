@@ -4,6 +4,7 @@ import CategoryItem from "../../../components/Category/Category"
 import ProductTabs from "../../../components/ProductTabs/ProductTabs"
 import { useEffect, useState } from "react"
 import { CategoryService } from "../../../services/CategoryService"
+import AIChatSupport from "../../../components/AIChatSupport/AIChatSupport"
 
 function Home() {
   const [category, setCategory] = useState([])
@@ -134,6 +135,7 @@ function Home() {
           <ProductTabs />
         </div>
       </div>
+       <AIChatSupport />
     </>
   )
 }
